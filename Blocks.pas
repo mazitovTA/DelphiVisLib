@@ -56,6 +56,7 @@ type
   public
     _srcFrame:     Pointer;
     _dstFrame:     Pointer;
+    code:          Integer;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -89,7 +90,7 @@ var
   releaseFrame : function( sourse: Pointer):Integer; cdecl;
 
   copyFrame : function( src: Pointer; dst: pPointer):Integer; cdecl;
-  convertColor : function( src: Pointer; dst: pPointer):Integer; cdecl;
+  convertColor : function( src: Pointer; dst: pPointer; code: Integer):Integer; cdecl;
 
   createHandledWindow : function( windowName: AnsiString):Pointer; cdecl;
   destroyWindowByName : function( windowName: AnsiString):Integer; cdecl;
@@ -325,6 +326,10 @@ function    TCOLORCONVERT.GetParamID;
 begin
   Result:=inherited GetParamId(ParamName,DataType,IsConst);
   if Result = -1 then begin
+    if StrEqu(ParamName,'code') then begin
+      Result:=NativeInt(@code);
+      DataType:=dtInteger;
+    end;
   end
 end;
 
@@ -361,7 +366,7 @@ begin
     f_GoodStep:
        begin
           _srcFrame := Pointer(U[0].Arr^[0]);
-          res := convertColor(_srcFrame, @_dstFrame);
+          res := convertColor(_srcFrame, @_dstFrame, code);
           Pointer(Y[0].Arr^[0]):=_srcFrame;
           Pointer(Y[1].Arr^[0]):=_dstFrame;
        end;
