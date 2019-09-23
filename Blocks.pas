@@ -153,8 +153,7 @@ begin
                res := retrieveImage(_source, _frame);
                if res = 0 then
                begin
-                  Pointer(Y[0].Arr^[0]):=_frame;
-                  //pPointer(@Y[0].Arr^[0])^:=_frame;
+                  pPointer(@Y[0].Arr^[0])^:=_frame;
                end
                else
                begin
@@ -234,7 +233,7 @@ begin
            res := openImage(@_source, source);
            if res = 0 then
            begin
-             Pointer(Y[0].Arr^[0]):=_source;
+              pPointer(@Y[0].Arr^[0])^:=_source;
            end
            else
            begin
@@ -367,8 +366,8 @@ begin
        begin
           _srcFrame := Pointer(U[0].Arr^[0]);
           res := convertColor(_srcFrame, @_dstFrame, code);
-          Pointer(Y[0].Arr^[0]):=_srcFrame;
-          Pointer(Y[1].Arr^[0]):=_dstFrame;
+          pPointer(@Y[0].Arr^[0])^:=_srcFrame;
+          pPointer(@Y[1].Arr^[0])^:=_dstFrame;
        end;
    end;
  end;
@@ -422,8 +421,8 @@ begin
        begin
           _srcFrame := Pointer(U[0].Arr^[0]);
           res := copyFrame(_srcFrame, @_dstFrame);
-          Pointer(Y[0].Arr^[0]):=_srcFrame;
-          Pointer(Y[1].Arr^[0]):=_dstFrame;
+          pPointer(@Y[0].Arr^[0])^:=_srcFrame;
+          pPointer(@Y[1].Arr^[0])^:=_dstFrame;
        end;
 
    end;
