@@ -14,10 +14,8 @@ type
     delay:         Integer;
     _frame:        Pointer;
 
-    function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    constructor    Create(Owner: TObject);override;
   end;
 
   TIMREAD = class(TRunObject)
@@ -33,7 +31,6 @@ type
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    constructor    Create(Owner: TObject);override;
   end;
 
   TFRAMESOURCE = class(TRunObject)
@@ -49,7 +46,6 @@ type
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    constructor    Create(Owner: TObject);override;
   end;
 
   TCOLORCONVERT = class(TRunObject)
@@ -57,11 +53,11 @@ type
     _srcFrame:     Pointer;
     _dstFrame:     Pointer;
     code:          Integer;
+    visOut:        Boolean;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    constructor    Create(Owner: TObject);override;
   end;
 
   TFRAMECOPY = class(TRunObject)
@@ -72,7 +68,6 @@ type
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    constructor    Create(Owner: TObject);override;
   end;
   ///////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////
@@ -104,10 +99,7 @@ uses math;
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////    TFRAMESOURCE   /////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
-constructor TFRAMESOURCE.Create;
-begin
-  inherited;
-end;
+
 
 function    TFRAMESOURCE.GetParamID;
 begin
@@ -127,7 +119,6 @@ begin
      i_GetCount:    begin
                       cY[0] := 1;
                    end;
-
     i_GetInit:     begin
                      Result:=1;
                    end;
@@ -157,13 +148,13 @@ begin
                end
                else
                begin
-                  Pointer(Y[0].Arr^[0]):=0;
+                  pPointer(@Y[0].Arr^[0])^:=nil;
                end;
            end
            else
            begin
               res := -1;
-              Pointer(Y[0].Arr^[0]):=0;
+              pPointer(@Y[0].Arr^[0])^:=nil;
            end;
        end;
 
@@ -186,10 +177,6 @@ begin
 ///////////////////////////////////////////////////////////////////////////
 //////////////////////////////    TIMREAD   ///////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-constructor TIMREAD.Create;
-begin
-  inherited;
-end;
 
 
 function    TIMREAD.GetParamID;
@@ -237,7 +224,7 @@ begin
            end
            else
            begin
-             Pointer(Y[0].Arr^[0]):=0;
+             pPointer(@Y[0].Arr^[0])^:=nil;
            end;
        end;
 
@@ -254,11 +241,6 @@ begin
  ///////////////////////////////////////////////////////////////////////////
 //////////////////////////////    TIMSHOW   ///////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-constructor TIMSHOW.Create;
-begin
-  inherited;
-end;
-
 
 function    TIMSHOW.GetParamID;
 begin
@@ -276,19 +258,6 @@ begin
   end
 end;
 
-function TIMSHOW.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
-var res,i: integer;
-begin
-  Result:=0;
-  case Action of
-    i_GetInit:     begin
-                     Result:=1;
-                   end;
-  else
-    Result:=inherited InfoFunc(Action,aParameter);
-  end
-end;
-
 function   TIMSHOW.RunFunc;
 var res,i: integer;
 begin
@@ -302,7 +271,7 @@ begin
 
     f_GoodStep:
        begin
-           _frame := Pointer(U[0].Arr^[0]);
+           _frame := pPointer(@U[0].Arr^[0])^;
            res := showFrame(_frame, delay, windowName);
        end;
 
@@ -316,10 +285,6 @@ begin
  ///////////////////////////////////////////////////////////////////////////
 //////////////////////////////    TCOLORCONVERT   ///////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-constructor TCOLORCONVERT.Create;
-begin
-  inherited;
-end;
 
 function    TCOLORCONVERT.GetParamID;
 begin
@@ -328,6 +293,11 @@ begin
     if StrEqu(ParamName,'code') then begin
       Result:=NativeInt(@code);
       DataType:=dtInteger;
+    end
+    else
+    if StrEqu(ParamName,'visOut') then begin
+      Result:=NativeInt(@visOut);
+      DataType:=dtBool;
     end;
   end
 end;
@@ -339,10 +309,9 @@ begin
   case Action of
     i_GetCount:    begin
                       cY[0] := 1;
-                      cY[1] := 1;
-                   end;
-    i_GetInit:     begin
-                     Result:=1;
+                      if (visOut) then begin
+                        cY[1] := 1;
+                      end;
                    end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -356,29 +325,27 @@ begin
  case Action of
    f_InitState:
        begin
-          Pointer(U[0].Arr^[0]) := 0;
-          Pointer(Y[0].Arr^[0]) := 0;
-          Pointer(Y[1].Arr^[0]) := 0;
+          pPointer(@Y[0].Arr^[0])^ := 0;
+          if (visOut) then begin
+            pPointer(@Y[1].Arr^[0])^ := 0;
+          end;
           Result:=0;
        end;
 
     f_GoodStep:
        begin
-          _srcFrame := Pointer(U[0].Arr^[0]);
+          _srcFrame := pPointer(@U[0].Arr^[0])^;
           res := convertColor(_srcFrame, @_dstFrame, code);
-          pPointer(@Y[0].Arr^[0])^:=_srcFrame;
-          pPointer(@Y[1].Arr^[0])^:=_dstFrame;
+          pPointer(@Y[0].Arr^[0])^:=_dstFrame;
+          if (visOut) then begin
+            pPointer(@Y[1].Arr^[0])^:=_srcFrame;
+          end;
        end;
    end;
  end;
   ///////////////////////////////////////////////////////////////////////////
 //////////////////////////////    TFRAMECOPY   ///////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-constructor TFRAMECOPY.Create;
-begin
-  inherited;
-end;
-
 
 function    TFRAMECOPY.GetParamID;
 begin
@@ -396,9 +363,6 @@ begin
                       cY[0] := 1;
                       cY[1] := 1;
                    end;
-    i_GetInit:     begin
-                     Result:=1;
-                   end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
   end
@@ -411,15 +375,14 @@ begin
  case Action of
    f_InitState:
        begin
-          Pointer(U[0].Arr^[0]) := 0;
-          Pointer(Y[0].Arr^[0]) := 0;
-          Pointer(Y[1].Arr^[0]) := 0;
+          pPointer(@Y[0].Arr^[0])^ := 0;
+          pPointer(@Y[1].Arr^[0])^ := 0;
           Result:=0;
        end;
 
     f_GoodStep:
        begin
-          _srcFrame := Pointer(U[0].Arr^[0]);
+          _srcFrame := pPointer(@U[0].Arr^[0])^;
           res := copyFrame(_srcFrame, @_dstFrame);
           pPointer(@Y[0].Arr^[0])^:=_srcFrame;
           pPointer(@Y[1].Arr^[0])^:=_dstFrame;
