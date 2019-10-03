@@ -2,3 +2,7 @@
 __history/
 
 vision_lib.stat
+
+*.ini
+
+__recovery/

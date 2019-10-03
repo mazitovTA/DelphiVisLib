@@ -6,7 +6,12 @@ interface
 uses Windows, Classes, DataTypes, SysUtils, RunObjts, uExtMath;
 
 type
-  pPointer = ^Pointer;
+  pPointer        = ^Pointer;
+  TConversionType = (BGR_2_RGB,
+                     RGBA_2_RGB,
+                     RGB_2_BGR,
+                     RGB_2_GRAY,
+                     RGB_2_HSV);
 
   TIMSHOW = class(TRunObject)
   public
@@ -69,9 +74,9 @@ type
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
   end;
-  ///////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////
 
+  ///////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////
 
 var
 
@@ -335,7 +340,19 @@ begin
     f_GoodStep:
        begin
           _srcFrame := pPointer(@U[0].Arr^[0])^;
-          res := convertColor(_srcFrame, @_dstFrame, code);
+           Case code of
+              integer(BGR_2_RGB):
+                 res := convertColor(_srcFrame, @_dstFrame, 4);
+              integer(RGBA_2_RGB):
+                 res := convertColor(_srcFrame, @_dstFrame, 1);
+              integer(RGB_2_BGR):
+                 res := convertColor(_srcFrame, @_dstFrame, 4);
+              integer(RGB_2_GRAY):
+                 res := convertColor(_srcFrame, @_dstFrame, 7);
+              integer(RGB_2_HSV):
+                 res := convertColor(_srcFrame, @_dstFrame, 41);
+           End;
+
           pPointer(@Y[0].Arr^[0])^:=_dstFrame;
           if (visOut) then begin
             pPointer(@Y[1].Arr^[0])^:=_srcFrame;
