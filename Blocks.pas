@@ -6,7 +6,7 @@ interface
 uses Windows, Classes, DataTypes, SysUtils, RunObjts, uExtMath;
 
 type
-  pPointer        = ^Pointer;
+  pPointer = ^Pointer;
   TConversionType = (BGR_2_RGB,
                      RGBA_2_RGB,
                      RGB_2_BGR,
@@ -56,9 +56,9 @@ type
   TCOLORCONVERT = class(TRunObject)
   public
     _srcFrame:     Pointer;
-    _dstFrame:     Pointer;
+    _dstFrame:     Array of Pointer;
     code:          Integer;
-    visOut:        Boolean;
+    outNum:        Integer;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -68,15 +68,16 @@ type
   TFRAMECOPY = class(TRunObject)
   public
     _srcFrame:     Pointer;
-    _dstFrame:     Pointer;
+    _dstFrame:     Array of Pointer;
+    outNum:        Integer;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
   end;
+  ///////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////
 
-  ///////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////
 
 var
 
@@ -300,9 +301,9 @@ begin
       DataType:=dtInteger;
     end
     else
-    if StrEqu(ParamName,'visOut') then begin
-      Result:=NativeInt(@visOut);
-      DataType:=dtBool;
+    if StrEqu(ParamName,'outNum') then begin
+      Result:=NativeInt(@outNum);
+      DataType:=dtInteger;
     end;
   end
 end;
@@ -313,9 +314,11 @@ begin
   Result:=0;
   case Action of
     i_GetCount:    begin
-                      cY[0] := 1;
-                      if (visOut) then begin
-                        cY[1] := 1;
+                      if (outNum > 0) then begin
+                         For i := 1 to outNum do
+                         begin
+                          cY[i-1] := 1;
+                         end;
                       end;
                    end;
   else
@@ -330,9 +333,14 @@ begin
  case Action of
    f_InitState:
        begin
-          pPointer(@Y[0].Arr^[0])^ := 0;
-          if (visOut) then begin
-            pPointer(@Y[1].Arr^[0])^ := 0;
+          if (outNum > 0) then begin
+             For i := 1 to outNum do
+               begin
+                 pPointer(@Y[i-1].Arr^[0])^ := 0;
+               end;
+             if (outNum > 0) then begin
+               SetLength(_dstFrame, outNum);
+             end;
           end;
           Result:=0;
        end;
@@ -340,24 +348,31 @@ begin
     f_GoodStep:
        begin
           _srcFrame := pPointer(@U[0].Arr^[0])^;
-           Case code of
-              integer(BGR_2_RGB):
-                 res := convertColor(_srcFrame, @_dstFrame, 4);
-              integer(RGBA_2_RGB):
-                 res := convertColor(_srcFrame, @_dstFrame, 1);
-              integer(RGB_2_BGR):
-                 res := convertColor(_srcFrame, @_dstFrame, 4);
-              integer(RGB_2_GRAY):
-                 res := convertColor(_srcFrame, @_dstFrame, 7);
-              integer(RGB_2_HSV):
-                 res := convertColor(_srcFrame, @_dstFrame, 41);
-           End;
+          if (outNum > 0) then begin
+                 Case code of
+                    integer(BGR_2_RGB):
+                       convertColor(_srcFrame, @_dstFrame[0], 4);
+                    integer(RGBA_2_RGB):
+                       convertColor(_srcFrame, @_dstFrame[0], 1);
+                    integer(RGB_2_BGR):
+                       convertColor(_srcFrame, @_dstFrame[0], 4);
+                    integer(RGB_2_GRAY):
+                       convertColor(_srcFrame, @_dstFrame[0], 7);
+                    integer(RGB_2_HSV):
+                       convertColor(_srcFrame, @_dstFrame[0], 41);
+                 End;
+                 pPointer(@Y[0].Arr^[0])^:=_dstFrame[0];
+          end;
 
-          pPointer(@Y[0].Arr^[0])^:=_dstFrame;
-          if (visOut) then begin
-            pPointer(@Y[1].Arr^[0])^:=_srcFrame;
+          if (outNum > 1) then begin
+              For i := 1 to (outNum - 1) do
+               begin
+                 copyFrame(_dstFrame[0], @_dstFrame[i]);
+                 pPointer(@Y[i].Arr^[0])^:=_dstFrame[i];
+               end;
           end;
        end;
+
    end;
  end;
   ///////////////////////////////////////////////////////////////////////////
@@ -368,6 +383,10 @@ function    TFRAMECOPY.GetParamID;
 begin
   Result:=inherited GetParamId(ParamName,DataType,IsConst);
   if Result = -1 then begin
+    if StrEqu(ParamName,'outNum') then begin
+      Result:=NativeInt(@outNum);
+      DataType:=dtInteger;
+    end
   end
 end;
 
@@ -377,8 +396,12 @@ begin
   Result:=0;
   case Action of
     i_GetCount:    begin
-                      cY[0] := 1;
-                      cY[1] := 1;
+                      if (outNum > 0) then begin
+                         For i := 1 to outNum do
+                         begin
+                          cY[i-1] := 1;
+                         end;
+                      end;
                    end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -392,19 +415,33 @@ begin
  case Action of
    f_InitState:
        begin
-          pPointer(@Y[0].Arr^[0])^ := 0;
-          pPointer(@Y[1].Arr^[0])^ := 0;
+          if (outNum > 0) then begin
+             For i := 1 to outNum do
+               begin
+                 pPointer(@Y[i-1].Arr^[0])^ := 0;
+               end;
+             if (outNum > 1) then begin
+               SetLength(_dstFrame, outNum - 1);
+             end;
+          end;
           Result:=0;
        end;
 
     f_GoodStep:
        begin
           _srcFrame := pPointer(@U[0].Arr^[0])^;
-          res := copyFrame(_srcFrame, @_dstFrame);
-          pPointer(@Y[0].Arr^[0])^:=_srcFrame;
-          pPointer(@Y[1].Arr^[0])^:=_dstFrame;
+          if (outNum = 1) then begin
+              pPointer(@Y[0].Arr^[0])^:=_srcFrame;
+          end;
+          if (outNum > 1) then begin
+              pPointer(@Y[0].Arr^[0])^:=_srcFrame;
+              For i := 2 to outNum do
+               begin
+                 res := copyFrame(_srcFrame, @_dstFrame[i-2]);
+                 pPointer(@Y[i-1].Arr^[0])^:=_dstFrame[i-2];
+               end;
+          end;
        end;
-
    end;
  end;
 
