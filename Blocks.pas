@@ -58,17 +58,6 @@ type
     _srcFrame:     Pointer;
     _dstFrame:     Pointer;
     code:          Integer;
-    visOut:        Boolean;
-
-    function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
-    function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
-    function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-  end;
-
-  TFRAMECOPY = class(TRunObject)
-  public
-    _srcFrame:     Pointer;
-    _dstFrame:     Pointer;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -298,11 +287,6 @@ begin
     if StrEqu(ParamName,'code') then begin
       Result:=NativeInt(@code);
       DataType:=dtInteger;
-    end
-    else
-    if StrEqu(ParamName,'visOut') then begin
-      Result:=NativeInt(@visOut);
-      DataType:=dtBool;
     end;
   end
 end;
@@ -314,9 +298,6 @@ begin
   case Action of
     i_GetCount:    begin
                       cY[0] := 1;
-                      if (visOut) then begin
-                        cY[1] := 1;
-                      end;
                    end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -331,9 +312,6 @@ begin
    f_InitState:
        begin
           pPointer(@Y[0].Arr^[0])^ := 0;
-          if (visOut) then begin
-            pPointer(@Y[1].Arr^[0])^ := 0;
-          end;
           Result:=0;
        end;
 
@@ -352,61 +330,12 @@ begin
               integer(RGB_2_HSV):
                  res := convertColor(_srcFrame, @_dstFrame, 41);
            End;
-
           pPointer(@Y[0].Arr^[0])^:=_dstFrame;
-          if (visOut) then begin
-            pPointer(@Y[1].Arr^[0])^:=_srcFrame;
-          end;
        end;
    end;
  end;
-  ///////////////////////////////////////////////////////////////////////////
-//////////////////////////////    TFRAMECOPY   ///////////////////////////////
-///////////////////////////////////////////////////////////////////////////
 
-function    TFRAMECOPY.GetParamID;
-begin
-  Result:=inherited GetParamId(ParamName,DataType,IsConst);
-  if Result = -1 then begin
-  end
-end;
 
-function TFRAMECOPY.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
-var res,i: integer;
-begin
-  Result:=0;
-  case Action of
-    i_GetCount:    begin
-                      cY[0] := 1;
-                      cY[1] := 1;
-                   end;
-  else
-    Result:=inherited InfoFunc(Action,aParameter);
-  end
-end;
-
-function   TFRAMECOPY.RunFunc;
-var res,i: integer;
-begin
- Result:=0;
- case Action of
-   f_InitState:
-       begin
-          pPointer(@Y[0].Arr^[0])^ := 0;
-          pPointer(@Y[1].Arr^[0])^ := 0;
-          Result:=0;
-       end;
-
-    f_GoodStep:
-       begin
-          _srcFrame := pPointer(@U[0].Arr^[0])^;
-          res := copyFrame(_srcFrame, @_dstFrame);
-          pPointer(@Y[0].Arr^[0])^:=_srcFrame;
-          pPointer(@Y[1].Arr^[0])^:=_dstFrame;
-       end;
-
-   end;
- end;
 
  ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////

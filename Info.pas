@@ -61,14 +61,13 @@ type
   //    в соответствии с этой таблицей создаются соответсвующие run-объекты   //
   //**************************************************************************//
 const
-  ClassTable:array[0..4] of TClassRecord =
+  ClassTable:array[0..3] of TClassRecord =
   (
     //Блоки для расчёта
     (Name:'TFRAMESOURCE';       RunClass:TFRAMESOURCE),
     (Name:'TIMREAD';            RunClass:TIMREAD),
     (Name:'TIMSHOW';            RunClass:TIMSHOW),
-    (Name:'TCOLORCONVERT';      RunClass:TCOLORCONVERT),
-    (Name:'TFRAMECOPY';         RunClass:TFRAMECOPY)
+    (Name:'TCOLORCONVERT';      RunClass:TCOLORCONVERT)
   );
 
   //Это процедура создания объектов
