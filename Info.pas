@@ -61,13 +61,18 @@ type
   //    в соответствии с этой таблицей создаются соответсвующие run-объекты   //
   //**************************************************************************//
 const
-  ClassTable:array[0..3] of TClassRecord =
+  ClassTable:array[0..7] of TClassRecord =
   (
     //Блоки для расчёта
     (Name:'TFRAMESOURCE';       RunClass:TFRAMESOURCE),
     (Name:'TIMREAD';            RunClass:TIMREAD),
     (Name:'TIMSHOW';            RunClass:TIMSHOW),
-    (Name:'TCOLORCONVERT';      RunClass:TCOLORCONVERT)
+    (Name:'TCOLORCONVERT';      RunClass:TCOLORCONVERT),
+    (Name:'TBITWISEAND';         RunClass:TBITWISEAND),
+    (Name:'TBITWISEOR';          RunClass:TBITWISEOR) ,
+    (Name:'TBITWISENO';          RunClass:TBITWISENO) ,
+    (Name:'TBITWISEXOR';         RunClass:TBITWISEXOR)
+
   );
 
   //Это процедура создания объектов
