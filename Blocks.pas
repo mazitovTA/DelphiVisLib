@@ -15,10 +15,9 @@ type
 
   TIMSHOW = class(TRunObject)
   public
-    windowName:    AnsiString;
-    err:           AnsiString;
+    windowName:    String;
     delay:         Integer;
-    _frame:        Pointer;
+    frame:         Pointer;
 
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -27,9 +26,8 @@ type
   TIMREAD = class(TRunObject)
   public
     frame:         Pointer;
-    sourceName:    AnsiString;
+    sourceName:    String;
     code:          Integer;
-    err:           AnsiString;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -38,9 +36,8 @@ type
 
   TFRAMESOURCE = class(TRunObject)
   public
+    sourceName:    String;
     source:        Pointer;
-    sourceName:    AnsiString;
-    err:           AnsiString;
     frame:         Pointer;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
@@ -53,7 +50,6 @@ type
     src:           Pointer;
     dst:           Pointer;
     code:          Integer;
-    err:           AnsiString;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -65,7 +61,6 @@ type
     src1:          Pointer;
     src2:          Pointer;
     dst:           Pointer;
-    err:           AnsiString;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -77,7 +72,6 @@ type
     src1:          Pointer;
     src2:          Pointer;
     dst:           Pointer;
-    err:           AnsiString;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -86,9 +80,8 @@ type
 
   TBITWISENO = class(TRunObject)
   public
-    src:          Pointer;
+    src:           Pointer;
     dst:           Pointer;
-    err:           AnsiString;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -100,7 +93,6 @@ type
     src1:          Pointer;
     src2:          Pointer;
     dst:           Pointer;
-    err:           AnsiString;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -115,7 +107,6 @@ type
     alpha:         Double;
     beta:          Double;
     dst:           Pointer;
-    err:           AnsiString;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -128,7 +119,6 @@ type
     src2:          Pointer;
     scale:         Double;
     dst:           Pointer;
-    err:           AnsiString;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -141,7 +131,6 @@ type
     src2:          Pointer;
     scale:         Double;
     dst:           Pointer;
-    err:           AnsiString;
 
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -157,25 +146,24 @@ var
   getWindowHandle : function(windowName: AnsiString):Pointer; cdecl;
   releaseSimMat : function(sourse: pPointer):Integer; cdecl;
 
-  openImage : function(frame: pPointer; windowName: AnsiString; code:Integer; err:AnsiString):Integer; cdecl;
-  showFrame : function(sourse: Pointer; delay: Integer; windowName,err: AnsiString):Integer; cdecl;
-  openVideoSource : function(sourse: pPointer; windowName,err: AnsiString):Integer; cdecl;
-  retrieveImage : function(sourse: Pointer; frame: pPointer; err:AnsiString):Integer; cdecl;
-  releaseSourse : function(sourse: Pointer; err:AnsiString):Integer; cdecl;
-  destroyWindowByName : function(windowName: AnsiString; err:AnsiString):Integer; cdecl;
-  destroyAllWindows : function(err:AnsiString):Integer; cdecl;
+  openImage : function(frame: pPointer; windowName: AnsiString; code:Integer):Integer; cdecl;
+  showFrame : function(sourse: Pointer; delay: Integer; windowName: AnsiString):Integer; cdecl;
+  openVideoSource : function(sourse: pPointer; windowName: AnsiString):Integer; cdecl;
+  retrieveImage : function(sourse: Pointer; frame: pPointer):Integer; cdecl;
+  releaseSourse : function(sourse: Pointer):Integer; cdecl;
+  destroyWindowByName : function(windowName: AnsiString):Integer; cdecl;
+  destroyAllWindows : function():Integer; cdecl;
 
-  bitwiseAND : function(src1, src2 : Pointer; dst: pPointer; err:AnsiString):Integer; cdecl;
-  bitwiseOR  : function(src1, src2 : Pointer; dst: pPointer; err:AnsiString):Integer; cdecl;
-  bitwiseNO  : function(src1 : Pointer; dst: pPointer; err:AnsiString):Integer; cdecl;
-  bitwiseXOR : function(src1, src2 : Pointer; dst: pPointer; err:AnsiString):Integer; cdecl;
+  bitwiseAND : function(src1, src2 : Pointer; dst: pPointer):Integer; cdecl;
+  bitwiseOR  : function(src1, src2 : Pointer; dst: pPointer):Integer; cdecl;
+  bitwiseNO  : function(src1 : Pointer; dst: pPointer):Integer; cdecl;
+  bitwiseXOR : function(src1, src2 : Pointer; dst: pPointer):Integer; cdecl;
 
-  perElementAddWeighted : function(src1 : Pointer; alpha : Double; src2: Pointer;  beta : Double;  dst : pPointer; err:AnsiString):Integer; cdecl;
-  perElementDIV : function(scale : Double; src1 : Pointer; src2 : Pointer;  dst : pPointer; err:AnsiString):Integer; cdecl;
-  perElementMUL : function(scale : Double; src1 : Pointer; src2 : Pointer;  dst : pPointer; err:AnsiString):Integer; cdecl;
+  perElementAddWeighted : function(src1 : Pointer; alpha : Double; src2: Pointer;  beta : Double;  dst : pPointer):Integer; cdecl;
+  perElementDIV : function(scale : Double; src1 : Pointer; src2 : Pointer;  dst : pPointer):Integer; cdecl;
+  perElementMUL : function(scale : Double; src1 : Pointer; src2 : Pointer;  dst : pPointer):Integer; cdecl;
 
-
-
+  convertColor : function(src1: Pointer; dst: pPointer; code: Integer):Integer; cdecl;
 
 implementation
 
@@ -212,29 +200,25 @@ begin
 end;
 
 function   TFRAMESOURCE.RunFunc;
-var res:AnsiString;
+var res:Integer;
 begin
  Result:=0;
  case Action of
     f_InitState:
        begin
-          //res := openVideoSource(@_source, sourceName);
-          ErrorEvent(sourceName, msError, VisualObject);
+          res := openVideoSource(@source, sourceName);
           //notReady := 1;//************************** обработать res
           Result:=0;
        end;
 
     f_GoodStep:
        begin
-          ErrorEvent(sourceName, msError, VisualObject);
-       {
-           if notReady = 0 then
+           if res = 0 then
            begin
-               res := retrieveImage(_source, @_frame);
-               ErrorEvent('res', msError, VisualObject);
-               if res = '0' then
+               res := retrieveImage(source, @frame);
+               if res = 0 then
                begin
-                  pPointer(@Y[0].Arr^[0])^:=_frame;
+                  pPointer(@Y[0].Arr^[0])^:=frame;
                end
                else
                begin
@@ -243,28 +227,16 @@ begin
            end
            else
            begin
-              res := '-1';
               pPointer(@Y[0].Arr^[0])^:=nil;
            end;
-           }
+
        end;
 
     f_Stop:
        begin
-
-       {
-           if res = '0' then
-           begin
-              releaseSimMat(@_frame);
-           end;
-           if notReady = 0 then
-           begin
-              releaseSourse(_source);
-           end;
-           }
+           releaseSimMat(@frame);
+           releaseSourse(source);
        end;
-
-
  end;
  end;
 
@@ -312,7 +284,7 @@ begin
 
     f_GoodStep:
        begin
-           res := openImage(@frame, sourceName, code, err);
+           res := openImage(@frame, sourceName, code);
            if res = 0 then
            begin
               pPointer(@Y[0].Arr^[0])^:=frame;
@@ -325,12 +297,8 @@ begin
 
     f_Stop:
        begin
-           if res = 0 then
-           begin
-              releaseSimMat(@frame);
-           end;
+           releaseSimMat(@frame);
        end;
-
    end;
  end;
  ///////////////////////////////////////////////////////////////////////////
@@ -354,27 +322,25 @@ begin
 end;
 
 function   TIMSHOW.RunFunc;
-var res: AnsiString;
+var res: Integer;
 begin
  Result:=0;
  case Action of
    f_InitState:
        begin
-          ErrorEvent(windowName, msError, VisualObject);
-          //createHandledWindow(windowName);
+          createHandledWindow(windowName);
           Result:=0;
        end;
 
     f_GoodStep:
        begin
-          // _frame := pPointer(@U[0].Arr^[0])^;
-           //res := showFrame(_frame, delay, windowName);
+           frame := pPointer(@U[0].Arr^[0])^;
+           res := showFrame(frame, delay, windowName);
        end;
 
     f_Stop:
        begin
-          //destroyWindowByName(windowName);
-          Result:=0;
+          destroyWindowByName(windowName);
        end;
    end;
  end;
@@ -407,7 +373,7 @@ begin
 end;
 
 function   TCOLORCONVERT.RunFunc;
-var res :AnsiString;
+var res :Integer;
 begin
  Result:=0;
  case Action of
@@ -419,22 +385,24 @@ begin
 
     f_GoodStep:
        begin
-          _srcFrame := pPointer(@U[0].Arr^[0])^;
+          src := pPointer(@U[0].Arr^[0])^;
            Case code of
-           {
               integer(BGR_2_RGB):
-                 res := convertColor(_srcFrame, @_dstFrame, 4);
+                 res := convertColor(src, @dst, 4);
               integer(RGBA_2_RGB):
-                 res := convertColor(_srcFrame, @_dstFrame, 1);
+                 res := convertColor(src, @dst, 1);
               integer(RGB_2_BGR):
-                 res := convertColor(_srcFrame, @_dstFrame, 4);
+                 res := convertColor(src, @dst, 4);
               integer(RGB_2_GRAY):
-                 res := convertColor(_srcFrame, @_dstFrame, 7);
+                 res := convertColor(src, @dst, 7);
               integer(RGB_2_HSV):
-                 res := convertColor(_srcFrame, @_dstFrame, 41);
-                 }
+                 res := convertColor(src, @dst, 41);
            End;
-          pPointer(@Y[0].Arr^[0])^:=_dstFrame;
+           pPointer(@Y[0].Arr^[0])^:=dst;
+       end;
+    f_Stop:
+       begin
+           releaseSimMat(@dst);
        end;
    end;
  end;
@@ -448,14 +416,6 @@ begin
 
 function    TBITWISEAND.GetParamID;
 begin
-  {Result:=inherited GetParamId(ParamName,DataType,IsConst);
-  if Result = -1 then begin
-    if StrEqu(ParamName,'code') then begin
-      Result:=NativeInt(@code);
-      DataType:=dtInteger;
-    end;
-  end
-  }
   Result:=-1;
 end;
 
@@ -473,7 +433,7 @@ begin
 end;
 
 function   TBITWISEAND.RunFunc;
-var res: AnsiString;
+var res: Integer;
 begin
  Result:=0;
  case Action of
@@ -485,16 +445,16 @@ begin
 
     f_GoodStep:
        begin
-          _src1Frame := pPointer(@U[0].Arr^[0])^;
-          _src2Frame := pPointer(@U[0].Arr^[1])^;
-          _dstFrame  := pPointer(@Y[0].Arr^[0])^;
-          res := bitwiseAND(_src1Frame, _src2Frame, @_dstFrame);
-          pPointer(@Y[0].Arr^[0])^:=_dstFrame;
+          src1 := pPointer(@U[0].Arr^[0])^;
+          src2 := pPointer(@U[0].Arr^[1])^;
+          dst  := pPointer(@Y[0].Arr^[0])^;
+          res := bitwiseAND(src1, src2, @dst);
+          pPointer(@Y[0].Arr^[0])^:=dst;
        end;
 
     f_Stop:
        begin
-          releaseSimMat(@_dstFrame);
+          releaseSimMat(@dst);
           Result:=0;
        end;
    end;
@@ -505,19 +465,11 @@ begin
 ///////////////////////////////////////////////////////////////////////////
 function    TBITWISEOR.GetParamID;
 begin
-  {Result:=inherited GetParamId(ParamName,DataType,IsConst);
-  if Result = -1 then begin
-    if StrEqu(ParamName,'code') then begin
-      Result:=NativeInt(@code);
-      DataType:=dtInteger;
-    end;
-  end
-  }
   Result:=-1;
 end;
 
 function TBITWISEOR.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
-//var res,i: integer;
+var res,i: integer;
 begin
   Result:=0;
   case Action of
@@ -545,7 +497,7 @@ begin
           src1 := pPointer(@U[0].Arr^[0])^;
           src2 := pPointer(@U[0].Arr^[1])^;
           dst  := pPointer(@Y[0].Arr^[0])^;
-          res := bitwiseOR(src1, src2, @dst, err);
+          res := bitwiseOR(src1, src2, @dst);
           pPointer(@Y[0].Arr^[0])^:=dst;
        end;
 
@@ -563,14 +515,6 @@ begin
 
 function    TBITWISENO.GetParamID;
 begin
-  {Result:=inherited GetParamId(ParamName,DataType,IsConst);
-  if Result = -1 then begin
-    if StrEqu(ParamName,'code') then begin
-      Result:=NativeInt(@code);
-      DataType:=dtInteger;
-    end;
-  end
-  }
   Result:=-1;
 end;
 
@@ -602,32 +546,24 @@ begin
        begin
           src := pPointer(@U[0].Arr^[0])^;
           dst  := pPointer(@Y[0].Arr^[0])^;
-          res := bitwiseNO(src, @dst, err);
+          res := bitwiseNO(src, @dst);
           pPointer(@Y[0].Arr^[0])^:=dst;
        end;
 
     f_Stop:
        begin
-          releaseSimMat(@_dstFrame);
+          releaseSimMat(@dst);
           Result:=0;
        end;
    end;
  end;
 
- ///////////////////////////////////////////////////////////////////////////
-//////////////////////////////    TBITWISEXOR   ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+//////////////////////////////    TBITWISEXOR   ///////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
 function    TBITWISEXOR.GetParamID;
 begin
-  {Result:=inherited GetParamId(ParamName,DataType,IsConst);
-  if Result = -1 then begin
-    if StrEqu(ParamName,'code') then begin
-      Result:=NativeInt(@code);
-      DataType:=dtInteger;
-    end;
-  end
-  }
   Result:=-1;
 end;
 
@@ -660,7 +596,7 @@ begin
           src1 := pPointer(@U[0].Arr^[0])^;
           src2 := pPointer(@U[0].Arr^[1])^;
           dst  := pPointer(@Y[0].Arr^[0])^;
-          res := bitwiseXOR(src1, src2, @dst, err);
+          res := bitwiseXOR(src1, src2, @dst);
           pPointer(@Y[0].Arr^[0])^:=dst;
        end;
 
@@ -674,20 +610,12 @@ begin
 
    //***********++++++++++++
 
-  ///////////////////////////////////////////////////////////////////////////
-//////////////////////////////    tAddWeighted   ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+//////////////////////////////    tAddWeighted   //////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
 function    TperElementAddWeighted.GetParamID;
 begin
-  {Result:=inherited GetParamId(ParamName,DataType,IsConst);
-  if Result = -1 then begin
-    if StrEqu(ParamName,'code') then begin
-      Result:=NativeInt(@code);
-      DataType:=dtInteger;
-    end;
-  end
-  }
   Result:=-1;
 end;
 
@@ -722,8 +650,7 @@ begin
           src2 := pPointer(@U[0].Arr^[2])^;
           beta      :=  U[0].Arr^[3];
           dst  := pPointer(@Y[0].Arr^[0])^;
-          res := perElementAddWeighted(src1,alpha, src2, beta, @_dst;
-//  perElementAddWeighted : function(src1 : Pointer; alpha : ^RealType; src2: Pointer;  beta : ^RealType;  dst : pPointer):AnsiString;
+          res := perElementAddWeighted(src1, alpha, src2, beta, @dst);
           pPointer(@Y[0].Arr^[0])^:=dst;
        end;
 
@@ -735,22 +662,12 @@ begin
    end;
  end;
 
-
-
 ///////////////////////////////////////////////////////////////////////////
-//////////////////////////////    TperElementDIV   ///////////////////////////////
+//////////////////////////////    TperElementDIV   ////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
 function    TperElementDIV.GetParamID;
 begin
-  {Result:=inherited GetParamId(ParamName,DataType,IsConst);
-  if Result = -1 then begin
-    if StrEqu(ParamName,'code') then begin
-      Result:=NativeInt(@code);
-      DataType:=dtInteger;
-    end;
-  end
-  }
   Result:=-1;
 end;
 
@@ -768,8 +685,7 @@ begin
 end;
 
 function   TperElementDIV.RunFunc;
-var res:AnsiString;
-    _scale : RealType;
+var res:Integer;
 begin
  Result:=0;
  case Action of
@@ -781,19 +697,19 @@ begin
 
     f_GoodStep:
        begin
-          _scale     := U[0].Arr[0];
-          _src1Frame := pPointer(@U[0].Arr^[1])^;
-          _src2Frame := pPointer(@U[0].Arr^[2])^;
-          _dstFrame  := pPointer(@Y[0].Arr^[0])^;
+          scale     := U[0].Arr[0];
+          src1 := pPointer(@U[0].Arr^[1])^;
+          src2 := pPointer(@U[0].Arr^[2])^;
+          dst  := pPointer(@Y[0].Arr^[0])^;
 
-          res := perElementDIV(_scale, _src1Frame, _src2Frame, @_dstFrame);
+          res := perElementDIV(scale, src1, src2, @dst);
 
-          pPointer(@Y[0].Arr^[0])^:=_dstFrame;
+          pPointer(@Y[0].Arr^[0])^:=dst;
        end;
 
     f_Stop:
        begin
-          releaseSimMat(@_dstFrame);
+          releaseSimMat(@dst);
           Result:=0;
        end;
    end;
@@ -802,19 +718,11 @@ begin
 
 
 ///////////////////////////////////////////////////////////////////////////
-//////////////////////////////    TperElementMUL   ///////////////////////////////
+//////////////////////////////    TperElementMUL   ////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
 function    TperElementMUL.GetParamID;
 begin
-  {Result:=inherited GetParamId(ParamName,DataType,IsConst);
-  if Result = -1 then begin
-    if StrEqu(ParamName,'code') then begin
-      Result:=NativeInt(@code);
-      DataType:=dtInteger;
-    end;
-  end
-  }
   Result:=-1;
 end;
 
@@ -832,8 +740,7 @@ begin
 end;
 
 function   TperElementMUL.RunFunc;
-var res:AnsiString;
-    _scale : RealType;
+var res:Integer;
 begin
  Result:=0;
  case Action of
@@ -845,28 +752,21 @@ begin
 
     f_GoodStep:
        begin
-          _scale     := U[0].Arr[0];
-          _src1Frame := pPointer(@U[0].Arr^[1])^;
-          _src2Frame := pPointer(@U[0].Arr^[2])^;
-          _dstFrame  := pPointer(@Y[0].Arr^[0])^;
-          res := perElementMUL(_scale,_src1Frame, _src2Frame, @_dstFrame);
-
-          pPointer(@Y[0].Arr^[0])^:=_dstFrame;
+          scale     := U[0].Arr[0];
+          src1 := pPointer(@U[0].Arr^[1])^;
+          src2 := pPointer(@U[0].Arr^[2])^;
+          dst  := pPointer(@Y[0].Arr^[0])^;
+          res := perElementMUL(scale, src1, src2, @dst);
+          pPointer(@Y[0].Arr^[0])^:=dst;
        end;
 
     f_Stop:
        begin
-          releaseSimMat(@_dstFrame);
+          releaseSimMat(@dst);
           Result:=0;
        end;
    end;
  end;
-
-
-
-
-
-
 
 
  //***********************************************
@@ -894,7 +794,6 @@ initialization
   releaseSourse := GetProcAddress(hDll, 'releaseSourse');
   releaseSimMat := GetProcAddress(hDll, 'releaseSimMat');
 
-  copyFrame := GetProcAddress(hDll, 'copyFrame');
   convertColor := GetProcAddress(hDll, 'sim_convertColor');
 
   createHandledWindow := GetProcAddress(hDll, 'createHandledWindow');
