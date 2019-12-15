@@ -61,18 +61,34 @@ type
   //    в соответствии с этой таблицей создаются соответсвующие run-объекты   //
   //**************************************************************************//
 const
-  ClassTable:array[0..7] of TClassRecord =
+  ClassTable:array[0..24] of TClassRecord =
   (
     //Блоки для расчёта
-    (Name:'TFRAMESOURCE';       RunClass:TFRAMESOURCE),
-    (Name:'TIMREAD';            RunClass:TIMREAD),
-    (Name:'TIMSHOW';            RunClass:TIMSHOW),
-    (Name:'TCOLORCONVERT';      RunClass:TCOLORCONVERT),
+    (Name:'TFRAMESOURCE';        RunClass:TFRAMESOURCE),
+    (Name:'TIMREAD';             RunClass:TIMREAD),
+    (Name:'TIMSHOW';             RunClass:TIMSHOW),
+    (Name:'TCOLORCONVERT';       RunClass:TCOLORCONVERT),
     (Name:'TBITWISEAND';         RunClass:TBITWISEAND),
-    (Name:'TBITWISEOR';          RunClass:TBITWISEOR) ,
-    (Name:'TBITWISENO';          RunClass:TBITWISENO) ,
-    (Name:'TBITWISEXOR';         RunClass:TBITWISEXOR)
-
+    (Name:'TBITWISEOR';          RunClass:TBITWISEOR),
+    (Name:'TBITWISENO';          RunClass:TBITWISENO),
+    (Name:'TBITWISEXOR';         RunClass:TBITWISEXOR),
+    (Name:'TperElementAddWeighted';RunClass:TperElementAddWeighted),
+    (Name:'TperElementDIV';      RunClass:TperElementDIV),
+    (Name:'TperElementMUL';      RunClass:TperElementMUL),
+    (Name:'TperElementADDV';     RunClass:TperElementADDV),
+    (Name:'TperElementMULV';     RunClass:TperElementMULV),
+    (Name:'TTRESHOLD';           RunClass:TTRESHOLD),
+    (Name:'TADAPTRESHOLD';       RunClass:TADAPTRESHOLD),
+    (Name:'TBILATERATEFILTER';   RunClass:TBILATERATEFILTER),
+    (Name:'TBLUR';               RunClass:TBLUR),
+    (Name:'TBOXFILTER';          RunClass:TBOXFILTER),
+    (Name:'TCANNY';              RunClass:TCANNY),
+    (Name:'TCORNERHARRIS';       RunClass:TCORNERHARRIS),
+    (Name:'TDILATE';             RunClass:TDILATE),
+    (Name:'TERODE';              RunClass:TERODE),
+    (Name:'TSPLIT';              RunClass:TSPLIT),
+    (Name:'TINRANGE';            RunClass:TINRANGE),
+    (Name:'TwarpPerspective';    RunClass:TwarpPerspective)
   );
 
   //Это процедура создания объектов
