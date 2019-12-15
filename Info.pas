@@ -61,7 +61,7 @@ type
   //    в соответствии с этой таблицей создаются соответсвующие run-объекты   //
   //**************************************************************************//
 const
-  ClassTable:array[0..24] of TClassRecord =
+  ClassTable:array[0..25] of TClassRecord =
   (
     //Блоки для расчёта
     (Name:'TFRAMESOURCE';        RunClass:TFRAMESOURCE),
@@ -88,7 +88,8 @@ const
     (Name:'TERODE';              RunClass:TERODE),
     (Name:'TSPLIT';              RunClass:TSPLIT),
     (Name:'TINRANGE';            RunClass:TINRANGE),
-    (Name:'TwarpPerspective';    RunClass:TwarpPerspective)
+    (Name:'TwarpPerspective';    RunClass:TwarpPerspective),
+    (Name:'TLANE';               RunClass:TLANE)
   );
 
   //Это процедура создания объектов

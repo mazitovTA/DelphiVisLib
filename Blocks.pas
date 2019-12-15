@@ -285,6 +285,17 @@ TINRANGE = class(TRunObject)
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
         end;
+TLANE = class(TRunObject)
+        public
+            src:    Pointer;
+            draw:    Pointer;
+            dst:    Pointer;
+
+            function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
+            function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
+            function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+        end;
+
 TwarpPerspective = class(TRunObject)
         public
             src:    Pointer;
@@ -332,8 +343,9 @@ sim_cornerHarris : function( src : Pointer; dst : Pointer; blocksize : Integer; 
 sim_dilate : function( src : Pointer; dst : Pointer; blocksize : Integer; ksize : Integer; kshape : Integer): Integer; cdecl;
 sim_erode : function( src : Pointer; dst : Pointer; blocksize : Integer; ksize : Integer; kShape : Integer): Integer; cdecl;
 sim_split : function( src : Pointer; dst1 : Pointer; dst2 : Pointer; dst3 : Pointer): Integer; cdecl;
-sim_inRange : function( src : Pointer; dst : Pointer; lower : Pointer; upper : Pointer): Integer; cdecl;
+sim_inRange : function( src : Pointer; dst : Pointer; lower : RealType; upper : RealType): Integer; cdecl;
 sim_warpPerspective : function( src : Pointer; dst : Pointer; srcPts : Pointer; dstPts : Pointer; dsizeX : Integer; dsizeY : Integer): Integer; cdecl;
+draw_lines : function( src : Pointer; draw : Pointer; dst : Pointer): Integer; cdecl;
 
 
 implementation
@@ -2145,11 +2157,7 @@ begin
 		begin
 
                src := pPointer(@U[0].Arr^[0])^;
-               lower  := U[1].Arr^[0];
-               upper  := U[2].Arr^[0];
-
-               res := sim_inRange(src, @dst, @lower, @upper);
-
+               res := sim_inRange(src, @dst, lower, upper);
                if res = 0 then
                begin
                   pPointer(@Y[0].Arr^[0])^:=dst;
@@ -2158,17 +2166,75 @@ begin
                else
                begin
                  pPointer(@Y[0].Arr^[0])^:=nil;
-
                end;
 
 		end;
 	f_Stop:
 		begin
-
                if res = 0 then
                begin
                   releaseSimMat(@dst);
+               end;
 
+		end;
+
+    end
+end;
+////////////////////////////////////////////////////////////////////////////
+/////                                       TLANE                  //////
+////////////////////////////////////////////////////////////////////////////
+
+function    TLANE.GetParamID;
+begin
+    Result:=inherited GetParamId(ParamName,DataType,IsConst);
+    if Result = -1 then begin
+
+    end
+end;
+
+function TLANE.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+begin
+   Result:=0;
+  case Action of
+     i_GetCount:    begin
+                      cY[0] := 1;
+                   end;
+    i_GetInit:     begin
+                     Result:=1;
+                   end;
+  else
+    Result:=inherited InfoFunc(Action,aParameter);
+  end
+end;
+
+function   TLANE.RunFunc;
+var res:Integer;
+begin
+ Result:=0;
+ case Action of
+ 	f_InitState:
+		begin
+		Result:=0;
+		end;
+	f_GoodStep:
+		begin
+               src := pPointer(@U[1].Arr^[0])^;
+               draw := pPointer(@U[0].Arr^[0])^;
+               res := draw_lines(src, draw, @dst);
+               if res = 0 then
+               begin
+                  pPointer(@Y[0].Arr^[0])^:=dst;
+               end
+               else
+               begin
+                 pPointer(@Y[0].Arr^[0])^:=nil;
+               end;
+		end;
+	f_Stop:
+		begin
+               if res = 0 then
+               begin
+                  releaseSimMat(@dst);
                end;
 
 		end;
@@ -2338,9 +2404,9 @@ begin
 	f_GoodStep:
 		begin
                src := pPointer(@U[0].Arr^[0])^;
-               dst  := pPointer(@Y[0].Arr^[0])^;
-
-               res := sim_warpPerspective(src, @dst, @srcPts[1],@dstPts[1],dsizeX,dsizeY);
+               res := sim_warpPerspective(src, @dst, @srcPts[1], @dstPts[1], dsizeX,dsizeY);
+               pPointer(@Y[0].Arr^[0])^:=dst;
+               {
                if res = 0 then
                begin
                   pPointer(@Y[0].Arr^[0])^:=dst;
@@ -2349,14 +2415,15 @@ begin
                begin
                  pPointer(@Y[0].Arr^[0])^:=nil;
                end;
+               }
 
 		end;
 	f_Stop:
-		begin
+		begin          {
                if res = 0 then
                begin
                   releaseSimMat(@dst);
-               end;
+               end;    }
 
 		end;
 
@@ -2409,7 +2476,8 @@ sim_dilate :=  GetProcAddress(hDll, 'sim_dilate');
 sim_erode :=  GetProcAddress(hDll, 'sim_erode');
 sim_split :=  GetProcAddress(hDll, 'sim_split');
 sim_inRange :=  GetProcAddress(hDll, 'sim_inRange');
-sim_warpPerspective  :=  GetProcAddress(hDll, 'sim_warpPerspective ');
+sim_warpPerspective  :=  GetProcAddress(hDll, 'sim_warpPerspective');
+draw_lines  :=  GetProcAddress(hDll, 'draw_lines');
 
 finalization
   if hDll <> 0 then FreeLibrary(hDll);
