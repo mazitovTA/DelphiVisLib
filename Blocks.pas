@@ -20,19 +20,17 @@ type
 TFRAMESOURCE = class(TRunObject)
         public
             sourceName:    String;
-            source:        Pointer;
-            frame:         Pointer;
-
+            source:    Pointer;
+            frame:    Pointer;
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
         end;
 TIMREAD = class(TRunObject)
         public
-            frame:         Pointer;
+            frame:    Pointer;
             sourceName:    String;
-            code:          Integer;
-
+            code:    Integer;
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -40,18 +38,17 @@ TIMREAD = class(TRunObject)
 TIMSHOW = class(TRunObject)
         public
             windowName:    String;
-            delay:         Integer;
-            frame:         Pointer;
+            delay:    Integer;
+            frame:    Pointer;
 
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
         end;
-TCOLORCONVERT = class(TRunObject)
+TCONVERTCOLOR = class(TRunObject)
         public
             src:    Pointer;
             dst:    Pointer;
             code:    Integer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -61,7 +58,6 @@ TBITWISEAND = class(TRunObject)
             src1:    Pointer;
             src2:    Pointer;
             dst:    pPointer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -71,7 +67,6 @@ TBITWISEOR = class(TRunObject)
             src1:    Pointer;
             src2:    Pointer;
             dst:    pPointer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -80,7 +75,6 @@ TBITWISENO = class(TRunObject)
         public
             src:    Pointer;
             dst:    pPointer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -90,7 +84,15 @@ TBITWISEXOR = class(TRunObject)
             src1:    Pointer;
             src2:    Pointer;
             dst:    pPointer;
-
+            function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
+            function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
+            function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+        end;
+TmatrixMUL = class(TRunObject)
+        public
+            src1:    Pointer;
+            src2:    Pointer;
+            dst:    pPointer;
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -102,7 +104,6 @@ TperElementAddWeighted = class(TRunObject)
             src2:    Pointer;
             beta:    RealType;
             dst:    pPointer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -113,7 +114,6 @@ TperElementDIV = class(TRunObject)
             src1:    Pointer;
             src2:    Pointer;
             dst:    pPointer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -124,7 +124,6 @@ TperElementMUL = class(TRunObject)
             src1:    Pointer;
             src2:    Pointer;
             dst:    pPointer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -134,7 +133,6 @@ TperElementADDV = class(TRunObject)
             src:    Pointer;
             val:    RealType;
             dst:    pPointer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -144,7 +142,6 @@ TperElementMULV = class(TRunObject)
             src:    Pointer;
             val:    RealType;
             dst:    pPointer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -153,15 +150,14 @@ TTRESHOLD = class(TRunObject)
         public
             src:    Pointer;
             dst:    Pointer;
-            Thresh:    RealType;
-            Maxval:    RealType;
+            Thresh:    Double;
+            Maxval:    Double;
             codetype:    Integer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
         end;
-TADAPTRESHOLD = class(TRunObject)
+TADAPTIVETHRESHOLD = class(TRunObject)
         public
             src:    Pointer;
             dst:    Pointer;
@@ -170,19 +166,17 @@ TADAPTRESHOLD = class(TRunObject)
             ThresholdType:    Integer;
             blocksize:    Integer;
             C:    RealType;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
         end;
-TBILATERATEFILTER = class(TRunObject)
+TBILATERALFILTER = class(TRunObject)
         public
             src:    Pointer;
             dst:    Pointer;
             d:    Integer;
             SigmaColor:    RealType;
             SigmaSpace:    RealType;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -195,7 +189,18 @@ TBLUR = class(TRunObject)
             ksizeY:    Integer;
             anchorX:    Integer;
             anchorY:    Integer;
-
+            function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
+            function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
+            function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+        end;
+TGAUSSIANBLUR = class(TRunObject)
+        public
+            src:    Pointer;
+            dst:    Pointer;
+            ksizeX:    Integer;
+            ksizeY:    Integer;
+            sigmaX:    RealType;
+            sigmaY:    RealType;
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -209,7 +214,6 @@ TBOXFILTER = class(TRunObject)
             ksizeY:    Integer;
             anchorX:    Integer;
             anchorY:    Integer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -222,7 +226,6 @@ TCANNY = class(TRunObject)
             Threshold2:    RealType;
             apertureSize:    Integer;
             L2gradient:    boolean;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -234,7 +237,6 @@ TCORNERHARRIS = class(TRunObject)
             blocksize:    Integer;
             ksize:    Integer;
             k:    RealType;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -246,7 +248,6 @@ TDILATE = class(TRunObject)
             blocksize:    Integer;
             ksize:    Integer;
             kshape:    Integer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -258,7 +259,6 @@ TERODE = class(TRunObject)
             blocksize:    Integer;
             ksize:    Integer;
             kShape:    Integer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -269,7 +269,6 @@ TSPLIT = class(TRunObject)
             dst1:    Pointer;
             dst2:    Pointer;
             dst3:    Pointer;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
@@ -280,22 +279,82 @@ TINRANGE = class(TRunObject)
             dst:    Pointer;
             lower:    RealType;
             upper:    RealType;
-
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
         end;
-TLANE = class(TRunObject)
+TMERGE = class(TRunObject)
+        public
+            src1:    Pointer;
+            src2:    Pointer;
+            src3:    Pointer;
+            dst:    Pointer;
+            function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
+            function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
+            function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+        end;
+TSOBEL = class(TRunObject)
         public
             src:    Pointer;
-            draw:    Pointer;
             dst:    Pointer;
-
+            ddepth:    Integer;
+            dx:    Integer;
+            dy:    Integer;
+            ksize:    Integer;
+            scale:    RealType;
+            delta:    RealType;
             function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
         end;
-
+TSCHARR = class(TRunObject)
+        public
+            src:    Pointer;
+            dst:    Pointer;
+            ddepth:    Integer;
+            dx:    Integer;
+            dy:    Integer;
+            scale:    RealType;
+            delta:    RealType;
+            function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
+            function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
+            function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+        end;
+TLAPLACIAN = class(TRunObject)
+        public
+            src:    Pointer;
+            dst:    Pointer;
+            ddepth:    Integer;
+            ksize:    Integer;
+            scale:    RealType;
+            delta:    RealType;
+            function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
+            function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
+            function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+        end;
+TRESIZE = class(TRunObject)
+        public
+            src:    Pointer;
+            dst:    Pointer;
+            ksizeX:    Integer;
+            ksizeY:    Integer;
+            function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
+            function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
+            function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+        end;
+TRESIZEP = class(TRunObject)
+        public
+            src:    Pointer;
+            dst:    Pointer;
+            ksizeX:    Integer;
+            ksizeY:    Integer;
+            fx:    RealType;
+            fy:    RealType;
+            interpolation:    Integer;
+            function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
+            function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
+            function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+        end;
 TwarpPerspective = class(TRunObject)
         public
             src:    Pointer;
@@ -308,6 +367,19 @@ TwarpPerspective = class(TRunObject)
             function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
             function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
         end;
+TwarpAffine = class(TRunObject)
+        public
+            src:    Pointer;
+            dst:    Pointer;
+            warpPts:    Array[1..6] of RealType;
+            dsizeX:    Integer;
+            dsizeY:    Integer;
+            flags:    Integer;
+            function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
+            function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
+            function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+        end;
+
  //**************************************************************************//
  //                 Определяем ссылки для каждой функции библиотеки          //
  //**************************************************************************//
@@ -315,37 +387,45 @@ var
 
 createHandledWindow : function( windowName : AnsiString): Pointer; cdecl;
 getWindowHandle : function( windowName : AnsiString): Pointer; cdecl;
-retrieveImage : function(sourse: Pointer; frame: pPointer):Integer; cdecl;
+retrieveImage : function( source : Pointer; frame : pPointer): Integer; cdecl;
 releaseSimMat : function( source : pPointer): Integer; cdecl;
 releaseSourse : function( source : Pointer): Integer; cdecl;
-destroyWindowByName : function(windowName: AnsiString):Integer; cdecl;
+destroyWindowByName : function( windowName : AnsiString): Integer; cdecl;
 destroyAllWindows : function( err : AnsiString): Integer; cdecl;
-openVideoSource : function(sourse: pPointer; windowName: AnsiString):Integer; cdecl;
-openImage : function(frame: pPointer; windowName: AnsiString; code:Integer):Integer; cdecl;
-showFrame : function(sourse: Pointer; delay: Integer; windowName: AnsiString):Integer; cdecl;
+openVideoSource : function( source : pPointer; windowName : AnsiString): Integer; cdecl;
+openImage : function( frame : pPointer; windowName : AnsiString; code : Integer): Integer; cdecl;
+showFrame : function( source : Pointer; delay : Integer; windowName : AnsiString): Integer; cdecl;
 sim_convertColor : function( src : Pointer; dst : Pointer; code : Integer): Integer; cdecl;
 bitwiseAND : function( src1 : Pointer; src2 : Pointer; dst : pPointer): Integer; cdecl;
 bitwiseOR : function( src1 : Pointer; src2 : Pointer; dst : pPointer): Integer; cdecl;
 bitwiseNO : function( src : Pointer; dst : pPointer): Integer; cdecl;
 bitwiseXOR : function( src1 : Pointer; src2 : Pointer; dst : pPointer): Integer; cdecl;
+matrixMUL : function( src1 : Pointer; src2 : Pointer; dst : pPointer): Integer; cdecl;
 perElementAddWeighted : function( src1 : Pointer; alpha : RealType; src2 : Pointer; beta : RealType; dst : pPointer): Integer; cdecl;
 perElementDIV : function( scale : RealType; src1 : Pointer; src2 : Pointer; dst : pPointer): Integer; cdecl;
 perElementMUL : function( scale : RealType; src1 : Pointer; src2 : Pointer; dst : pPointer): Integer; cdecl;
 perElementADDV : function( src : Pointer; val : RealType; dst : pPointer): Integer; cdecl;
 perElementMULV : function( src : Pointer; val : RealType; dst : pPointer): Integer; cdecl;
-sim_threshold : function( src : Pointer; dst : Pointer; Thresh : Double; Maxval : RealType; codetype : Integer): Integer; cdecl;
+sim_threshold : function( src : Pointer; dst : Pointer; Thresh : Double; Maxval : Double; codetype : Integer): Integer; cdecl;
 sim_adaptiveThreshold : function( src : Pointer; dst : Pointer; maxValue : RealType; adaptiveMethod : Integer; ThresholdType : Integer; blocksize : Integer; C : RealType): Integer; cdecl;
 sim_bilateralFilter : function( src : Pointer; dst : Pointer; d : Integer; SigmaColor : RealType; SigmaSpace : RealType): Integer; cdecl;
 sim_blur : function( src : Pointer; dst : Pointer; ksizeX : Integer; ksizeY : Integer; anchorX : Integer; anchorY : Integer): Integer; cdecl;
+sim_gaussianBlur : function( src : Pointer; dst : Pointer; ksizeX : Integer; ksizeY : Integer; sigmaX : RealType; sigmaY : RealType): Integer; cdecl;
 sim_boxFilter : function( src : Pointer; dst : Pointer; ddepth : Integer; ksizeX : Integer; ksizeY : Integer; anchorX : Integer; anchorY : Integer): Integer; cdecl;
 sim_canny : function( src : Pointer; dst : Pointer; Threshold1 : RealType; Threshold2 : RealType; apertureSize : Integer; L2gradient : boolean): Integer; cdecl;
 sim_cornerHarris : function( src : Pointer; dst : Pointer; blocksize : Integer; ksize : Integer; k : RealType): Integer; cdecl;
 sim_dilate : function( src : Pointer; dst : Pointer; blocksize : Integer; ksize : Integer; kshape : Integer): Integer; cdecl;
 sim_erode : function( src : Pointer; dst : Pointer; blocksize : Integer; ksize : Integer; kShape : Integer): Integer; cdecl;
 sim_split : function( src : Pointer; dst1 : Pointer; dst2 : Pointer; dst3 : Pointer): Integer; cdecl;
-sim_inRange : function( src : Pointer; dst : Pointer; lower : RealType; upper : RealType): Integer; cdecl;
+sim_inRange : function( src : Pointer; dst : Pointer; lower : Pointer; upper : Pointer): Integer; cdecl;
+sim_merge : function( src1 : Pointer; src2 : Pointer; src3 : Pointer; dst : Pointer): Integer; cdecl;
+sim_sobel : function( src : Pointer; dst : Pointer; ddepth : Integer; dx : Integer; dy : Integer; ksize : Integer; scale : RealType; delta : RealType): Integer; cdecl;
+sim_scharr : function( src : Pointer; dst : Pointer; ddepth : Integer; dx : Integer; dy : Integer; scale : RealType; delta : RealType): Integer; cdecl;
+sim_laplacian : function( src : Pointer; dst : Pointer; ddepth : Integer; ksize : Integer; scale : RealType; delta : RealType): Integer; cdecl;
+sim_resize : function( src : Pointer; dst : Pointer; ksizeX : Integer; ksizeY : Integer): Integer; cdecl;
+sim_resizeP : function( src : Pointer; dst : Pointer; ksizeX : Integer; ksizeY : Integer; fx : RealType; fy : RealType; interpolation : Integer): Integer; cdecl;
 sim_warpPerspective : function( src : Pointer; dst : Pointer; srcPts : Pointer; dstPts : Pointer; dsizeX : Integer; dsizeY : Integer): Integer; cdecl;
-draw_lines : function( src : Pointer; draw : Pointer; dst : Pointer): Integer; cdecl;
+sim_warpAffine : function( src : Pointer; dst : Pointer; warpPts : Pointer; dsizeX : Integer; dsizeY : Integer; flags : Integer): Integer; cdecl;
 
 
 implementation
@@ -361,10 +441,13 @@ function    TFRAMESOURCE.GetParamID;
 begin
     Result:=inherited GetParamId(ParamName,DataType,IsConst);
     if Result = -1 then begin
+
        if StrEqu(ParamName,'source') then begin
             Result:=NativeInt(@sourceName);
-			       DataType:=dtString;
+			DataType:=dtString;
        end
+
+
     end
 end;
 
@@ -391,13 +474,17 @@ begin
  	f_InitState:
 		begin
           res := openVideoSource(@source, sourceName);
+
           Result:=0;
 		end;
 	f_GoodStep:
 		begin
+
+
            if res = 0 then
            begin
                res := retrieveImage(source, @frame);
+
                if res = 0 then
                begin
                   pPointer(@Y[0].Arr^[0])^:= frame;
@@ -409,13 +496,21 @@ begin
            end
            else
            begin
+
               pPointer(@Y[0].Arr^[0])^:=nil;
            end;
+
+
 		end;
 	f_Stop:
 		begin
+
+
            releaseSimMat(@frame);
+
            releaseSourse(source);
+
+
 		end;
 
     end
@@ -513,7 +608,7 @@ begin
 
        if StrEqu(ParamName,'delay') then begin
             Result:=NativeInt(@delay);
-			      DataType:=dtInteger;
+			DataType:=dtInteger;
        end
 
 
@@ -528,27 +623,32 @@ begin
  	f_InitState:
 		begin
           createHandledWindow(windowName);
-          Result:=0;
+		Result:=0;
 		end;
 	f_GoodStep:
 		begin
-           frame := pPointer(@U[0].Arr^[0])^;
-           res := showFrame(frame, delay, windowName);
+
+            frame := pPointer(@U[0].Arr^[0])^;
+            res := showFrame(frame, delay, windowName);
+
 		end;
 	f_Stop:
 		begin
-          destroyWindowByName(windowName);
+
+            destroyWindowByName(windowName);
+            //Result:=0;
+
 		end;
 
     end
 end;
 
 ////////////////////////////////////////////////////////////////////////////
-/////                                  TCOLORCONVERT                  //////
+/////                                  TCONVERTCOLOR                  //////
 ////////////////////////////////////////////////////////////////////////////
 
 
-function    TCOLORCONVERT.GetParamID;
+function    TCONVERTCOLOR.GetParamID;
 begin
     Result:=inherited GetParamId(ParamName,DataType,IsConst);
     if Result = -1 then begin
@@ -562,7 +662,7 @@ begin
     end
 end;
 
-function TCOLORCONVERT.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+function TCONVERTCOLOR.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
 begin
    Result:=0;
   case Action of
@@ -577,20 +677,25 @@ begin
   end
 end;
 
-function   TCOLORCONVERT.RunFunc;
+function   TCONVERTCOLOR.RunFunc;
 var res:Integer;
 begin
  Result:=0;
  case Action of
  	f_InitState:
 		begin
+
           pPointer(@Y[0].Arr^[0])^ := nil;
           Result:=0;
 		end;
 	f_GoodStep:
 		begin
+
+
           src := pPointer(@U[0].Arr^[0])^;
+
            Case code of
+
               integer(BGR_2_RGB):
                  res := sim_convertColor(src, @dst, 4);
               integer(RGBA_2_RGB):
@@ -601,14 +706,18 @@ begin
                  res := sim_convertColor(src, @dst, 7);
               integer(RGB_2_HSV):
                  res := sim_convertColor(src, @dst, 41);
+
            End;
-           pPointer(@Y[0].Arr^[0])^:=dst;
+
+          pPointer(@Y[0].Arr^[0])^:=dst;
 
 		end;
 	f_Stop:
 		begin
+
           releaseSimMat(@dst);
           Result:=0;
+
 		end;
 
     end
@@ -842,6 +951,63 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////
+/////                                     TmatrixMUL                  //////
+////////////////////////////////////////////////////////////////////////////
+
+
+function    TmatrixMUL.GetParamID;
+begin
+    Result:=-1;
+end;
+
+function TmatrixMUL.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+begin
+   Result:=0;
+  case Action of
+     i_GetCount:    begin
+                      cY[0] := 1;
+                   end;
+    i_GetInit:     begin
+                     Result:=1;
+                   end;
+  else
+    Result:=inherited InfoFunc(Action,aParameter);
+  end
+end;
+
+function   TmatrixMUL.RunFunc;
+var res:Integer;
+begin
+ Result:=0;
+ case Action of
+ 	f_InitState:
+		begin
+
+          pPointer(@Y[0].Arr^[0])^ := nil;
+          Result:=0;
+		end;
+	f_GoodStep:
+		begin
+
+          src1 := pPointer(@U[0].Arr^[0])^;
+          src2 := pPointer(@U[1].Arr^[0])^;
+          //dst  := pPointer(@Y[0].Arr^[0])^;
+          res := matrixMUL(src1, src2, @dst);
+          pPointer(@Y[0].Arr^[0])^:=dst;
+
+		end;
+	f_Stop:
+		begin
+
+          releaseSimMat(@dst);
+          Result:=0;
+
+		end;
+
+    end
+end;
+
+////////////////////////////////////////////////////////////////////////////
 /////                           TperElementAddWeighted                  //////
 ////////////////////////////////////////////////////////////////////////////
 
@@ -881,12 +1047,12 @@ begin
 		begin
 
           src1 := pPointer(@U[0].Arr^[0])^;
-          alpha     :=  U[0].Arr^[1];
           src2 := pPointer(@U[0].Arr^[2])^;
-          beta      :=  U[0].Arr^[3];
-          dst  := pPointer(@Y[0].Arr^[0])^;
+          //alpha     :=  U[0].Arr^[1];
+          //beta      :=  U[0].Arr^[3];
+          //dst  := pPointer(@Y[0].Arr^[0])^;
           res := perElementAddWeighted(src1,alpha, src2, beta, @dst);
-//  perElementAddWeighted : function(src1 : Pointer; alpha : ^RealType; src2: Pointer;  beta : ^RealType;  dst : pPointer):AnsiString;
+
           pPointer(@Y[0].Arr^[0])^:=dst;
 
 		end;
@@ -940,12 +1106,17 @@ begin
 	f_GoodStep:
 		begin
 
-          scale     := U[0].Arr[0];
-          src1 := pPointer(@U[1].Arr^[0])^;
-          src2 := pPointer(@U[2].Arr^[0])^;
-          dst  := pPointer(@Y[0].Arr^[0])^;
+          src1 := pPointer(@U[0].Arr^[0])^;
+          src2 := pPointer(@U[1].Arr^[0])^;
+          //dst  := pPointer(@Y[0].Arr^[0])^;
+          //scale     := U[2].Arr[0];
 
-          res := perElementDIV(scale, src1, src2, @dst);
+          if cU.Count = 3  then // попробуем проверить на наличие третьего входа
+
+              res := perElementDIV(U[2].Arr[0], src1, src2, @dst)
+          else
+              res := perElementDIV(scale, src1, src2, @dst);
+
 
           pPointer(@Y[0].Arr^[0])^:=dst;
 
@@ -968,7 +1139,16 @@ end;
 
 function    TperElementMUL.GetParamID;
 begin
-    Result:=-1;
+    Result:=inherited GetParamId(ParamName,DataType,IsConst);
+    if Result = -1 then begin
+
+       if StrEqu(ParamName,'scale') then begin
+            Result:=NativeInt(@scale);
+			DataType:=dtDouble;
+       end
+
+
+    end
 end;
 
 function TperElementMUL.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
@@ -1000,12 +1180,18 @@ begin
 	f_GoodStep:
 		begin
 
-          scale     := U[0].Arr[0];
-          src1 := pPointer(@U[1].Arr^[0])^;
-          src2 := pPointer(@U[2].Arr^[0])^;
-          dst  := pPointer(@Y[0].Arr^[0])^;
 
-          res := perElementDIV(scale, src1, src2, @dst);
+          src1 := pPointer(@U[0].Arr^[0])^;
+          src2 := pPointer(@U[1].Arr^[0])^;
+          //dst  := pPointer(@Y[0].Arr^[0])^;
+          //scale     := U[2].Arr[0];
+
+          if cU.Count = 3  then // попробуем проверить на наличие третьего входа
+
+              res := perElementMUL(U[2].Arr[0], src1, src2, @dst)
+          else
+              res := perElementMUL(scale, src1, src2, @dst);
+
 
           pPointer(@Y[0].Arr^[0])^:=dst;
 
@@ -1163,7 +1349,7 @@ begin
 
        if StrEqu(ParamName,'Thresh') then begin
             Result:=NativeInt(@Thresh);
-       DataType:=dtDouble;
+			DataType:=dtDouble;
        end
 
 		else
@@ -1175,10 +1361,9 @@ begin
 
 		else
 
-       if StrEqu(ParamName,'codetype') then
-       begin
+       if StrEqu(ParamName,'codetype') then begin
             Result:=NativeInt(@codetype);
-			      DataType:=dtInteger;
+			DataType:=dtInteger;
        end
 
 
@@ -1211,9 +1396,14 @@ begin
 		end;
 	f_GoodStep:
 		begin
+
            src := pPointer(@U[0].Arr^[0])^;
-          // Thresh := U[1].Arr^[0];
-          // Maxval := U[2].Arr^[0];
+           //Thresh := U[1].Arr^[0];
+           //Maxval := U[2].Arr^[0];
+           //codetype := U[3].Arr^[0];
+
+           //dst  := pPointer(@Y[0].Arr^[0])^;
+
            res := sim_threshold(src, @dst, Thresh, Maxval, codetype);
            if res = 0 then
            begin
@@ -1223,16 +1413,17 @@ begin
            begin
              pPointer(@Y[0].Arr^[0])^:=nil;
            end;
+
 		end;
 	f_Stop:
 		begin
-            {
-       begin
+
+
            if res = 0 then
            begin
               releaseSimMat(@dst);
            end;
-       end;      }
+
 
 		end;
 
@@ -1240,11 +1431,11 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////
-/////                                  TADAPTRESHOLD                  //////
+/////                             TADAPTIVETHRESHOLD                  //////
 ////////////////////////////////////////////////////////////////////////////
 
 
-function    TADAPTRESHOLD.GetParamID;
+function    TADAPTIVETHRESHOLD.GetParamID;
 begin
     Result:=inherited GetParamId(ParamName,DataType,IsConst);
     if Result = -1 then begin
@@ -1286,7 +1477,7 @@ begin
     end
 end;
 
-function TADAPTRESHOLD.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+function TADAPTIVETHRESHOLD.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
 begin
    Result:=0;
   case Action of
@@ -1301,7 +1492,7 @@ begin
   end
 end;
 
-function   TADAPTRESHOLD.RunFunc;
+function   TADAPTIVETHRESHOLD.RunFunc;
 var res:Integer;
 begin
  Result:=0;
@@ -1349,11 +1540,11 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////
-/////                              TBILATERATEFILTER                  //////
+/////                               TBILATERALFILTER                  //////
 ////////////////////////////////////////////////////////////////////////////
 
 
-function    TBILATERATEFILTER.GetParamID;
+function    TBILATERALFILTER.GetParamID;
 begin
     Result:=inherited GetParamId(ParamName,DataType,IsConst);
     if Result = -1 then begin
@@ -1381,7 +1572,7 @@ begin
     end
 end;
 
-function TBILATERATEFILTER.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+function TBILATERALFILTER.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
 begin
    Result:=0;
   case Action of
@@ -1396,7 +1587,7 @@ begin
   end
 end;
 
-function   TBILATERATEFILTER.RunFunc;
+function   TBILATERALFILTER.RunFunc;
 var res:Integer;
 begin
  Result:=0;
@@ -1543,6 +1734,107 @@ begin
 end;
 
 ////////////////////////////////////////////////////////////////////////////
+/////                                  TGAUSSIANBLUR                  //////
+////////////////////////////////////////////////////////////////////////////
+
+
+function    TGAUSSIANBLUR.GetParamID;
+begin
+    Result:=inherited GetParamId(ParamName,DataType,IsConst);
+    if Result = -1 then begin
+
+       if StrEqu(ParamName,'ksizeX') then begin
+            Result:=NativeInt(@ksizeX);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'ksizeY') then begin
+            Result:=NativeInt(@ksizeY);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'sigmaX') then begin
+            Result:=NativeInt(@sigmaX);
+			DataType:=dtDouble;
+       end
+
+		else
+
+       if StrEqu(ParamName,'sigmaY') then begin
+            Result:=NativeInt(@sigmaY);
+			DataType:=dtDouble;
+       end
+
+
+    end
+end;
+
+function TGAUSSIANBLUR.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+begin
+   Result:=0;
+  case Action of
+     i_GetCount:    begin
+                      cY[0] := 1;
+                   end;
+    i_GetInit:     begin
+                     Result:=1;
+                   end;
+  else
+    Result:=inherited InfoFunc(Action,aParameter);
+  end
+end;
+
+function   TGAUSSIANBLUR.RunFunc;
+var res:Integer;
+begin
+ Result:=0;
+ case Action of
+ 	f_InitState:
+		begin
+		Result:=0;
+		end;
+	f_GoodStep:
+		begin
+
+           src := pPointer(@U[0].Arr^[0])^;
+           //ksizeX := U[1].Arr^[0];
+           //ksizeY := U[2].Arr^[0];
+           //anchorX := U[3].Arr^[0];
+           //anchorY := U[4].Arr^[0];   //
+
+           dst  := pPointer(@Y[0].Arr^[0])^;
+
+           res := sim_gaussianBlur(src, @dst, ksizeX,ksizeY,sigmaX,sigmaY);
+           if res = 0 then
+           begin
+              pPointer(@Y[0].Arr^[0])^:=dst;
+           end
+           else
+           begin
+             pPointer(@Y[0].Arr^[0])^:=nil;
+           end;
+
+		end;
+	f_Stop:
+		begin
+
+
+           if res = 0 then
+           begin
+              releaseSimMat(@dst);
+           end;
+
+
+		end;
+
+    end
+end;
+
+////////////////////////////////////////////////////////////////////////////
 /////                                     TBOXFILTER                  //////
 ////////////////////////////////////////////////////////////////////////////
 
@@ -1662,14 +1954,14 @@ begin
 
        if StrEqu(ParamName,'Threshold1') then begin
             Result:=NativeInt(@Threshold1);
-			DataType:=dtString;
+			DataType:=dtDouble;
        end
 
 		else
 
        if StrEqu(ParamName,'Threshold2') then begin
             Result:=NativeInt(@Threshold2);
-			DataType:=dtString;
+			DataType:=dtDouble;
        end
 
 		else
@@ -1718,13 +2010,13 @@ begin
 		begin
 
                src := pPointer(@U[0].Arr^[0])^;
-               Threshold1 := U[1].Arr^[0];
-               Threshold2 := U[2].Arr^[0];
-              //apertureSize := integer(U[3].Arr^[0]);
+               //Threshold1 := U[1].Arr^[0];
+               //Threshold2 := U[2].Arr^[0];
+               //apertureSize := integer(U[3].Arr^[0]);
                //L2gradient := U[4].Arr^[0];
 
 
-               dst  := pPointer(@Y[0].Arr^[0])^;
+               //dst  := pPointer(@Y[0].Arr^[0])^;
 
                res := sim_canny(src, @dst, Threshold1, Threshold2,apertureSize,L2gradient);
                if res = 0 then
@@ -2157,7 +2449,11 @@ begin
 		begin
 
                src := pPointer(@U[0].Arr^[0])^;
-               res := sim_inRange(src, @dst, lower, upper);
+               lower  := U[1].Arr^[0];
+               upper  := U[2].Arr^[0];
+
+               res := sim_inRange(src, @dst, @lower, @upper);
+
                if res = 0 then
                begin
                   pPointer(@Y[0].Arr^[0])^:=dst;
@@ -2166,33 +2462,35 @@ begin
                else
                begin
                  pPointer(@Y[0].Arr^[0])^:=nil;
+
                end;
 
 		end;
 	f_Stop:
 		begin
+
                if res = 0 then
                begin
                   releaseSimMat(@dst);
+
                end;
 
 		end;
 
     end
 end;
+
 ////////////////////////////////////////////////////////////////////////////
-/////                                       TLANE                  //////
+/////                                         TMERGE                  //////
 ////////////////////////////////////////////////////////////////////////////
 
-function    TLANE.GetParamID;
+
+function    TMERGE.GetParamID;
 begin
-    Result:=inherited GetParamId(ParamName,DataType,IsConst);
-    if Result = -1 then begin
-
-    end
+    Result:=-1;
 end;
 
-function TLANE.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+function TMERGE.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
 begin
    Result:=0;
   case Action of
@@ -2207,7 +2505,7 @@ begin
   end
 end;
 
-function   TLANE.RunFunc;
+function   TMERGE.RunFunc;
 var res:Integer;
 begin
  Result:=0;
@@ -2218,9 +2516,125 @@ begin
 		end;
 	f_GoodStep:
 		begin
-               src := pPointer(@U[1].Arr^[0])^;
-               draw := pPointer(@U[0].Arr^[0])^;
-               res := draw_lines(src, draw, @dst);
+
+               src1 := pPointer(@U[0].Arr^[0])^;
+               src2 := pPointer(@U[1].Arr^[0])^;
+               src3 := pPointer(@U[2].Arr^[0])^;
+
+
+               res := sim_merge(src1,src2,src3, @dst);
+
+               if res = 0 then
+               begin
+                  pPointer(@Y[0].Arr^[0])^:=dst;
+
+               end
+               else
+               begin
+                 pPointer(@Y[0].Arr^[0])^:=nil;
+
+               end;
+
+		end;
+	f_Stop:
+		begin
+
+               if res = 0 then
+               begin
+                  releaseSimMat(@dst);
+
+               end;
+
+		end;
+
+    end
+end;
+
+////////////////////////////////////////////////////////////////////////////
+/////                                         TSOBEL                  //////
+////////////////////////////////////////////////////////////////////////////
+
+
+function    TSOBEL.GetParamID;
+begin
+    Result:=inherited GetParamId(ParamName,DataType,IsConst);
+    if Result = -1 then begin
+
+       if StrEqu(ParamName,'ddepth') then begin
+            Result:=NativeInt(@ddepth);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'dx') then begin
+            Result:=NativeInt(@dx);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'dy') then begin
+            Result:=NativeInt(@dy);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'ksize') then begin
+            Result:=NativeInt(@ksize);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'scale') then begin
+            Result:=NativeInt(@scale);
+			DataType:=dtDouble;
+       end
+
+		else
+
+       if StrEqu(ParamName,'delta') then begin
+            Result:=NativeInt(@delta);
+			DataType:=dtDouble;
+       end
+
+
+    end
+end;
+
+function TSOBEL.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+begin
+   Result:=0;
+  case Action of
+     i_GetCount:    begin
+                      cY[0] := 1;
+                   end;
+    i_GetInit:     begin
+                     Result:=1;
+                   end;
+  else
+    Result:=inherited InfoFunc(Action,aParameter);
+  end
+end;
+
+function   TSOBEL.RunFunc;
+var res:Integer;
+begin
+ Result:=0;
+ case Action of
+ 	f_InitState:
+		begin
+		Result:=0;
+		end;
+	f_GoodStep:
+		begin
+
+               src := pPointer(@U[0].Arr^[0])^;
+               //dst  := pPointer(@Y[0].Arr^[0])^;
+
+               res := sim_sobel(src, @dst, ddepth, dx, dy,ksize,scale,delta);
                if res = 0 then
                begin
                   pPointer(@Y[0].Arr^[0])^:=dst;
@@ -2229,18 +2643,407 @@ begin
                begin
                  pPointer(@Y[0].Arr^[0])^:=nil;
                end;
+
 		end;
 	f_Stop:
 		begin
+
+           begin
                if res = 0 then
                begin
                   releaseSimMat(@dst);
                end;
+           end;
 
 		end;
 
     end
 end;
+
+////////////////////////////////////////////////////////////////////////////
+/////                                        TSCHARR                  //////
+////////////////////////////////////////////////////////////////////////////
+
+
+function    TSCHARR.GetParamID;
+begin
+    Result:=inherited GetParamId(ParamName,DataType,IsConst);
+    if Result = -1 then begin
+
+       if StrEqu(ParamName,'ddepth') then begin
+            Result:=NativeInt(@ddepth);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'dx') then begin
+            Result:=NativeInt(@dx);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'dy') then begin
+            Result:=NativeInt(@dy);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'scale') then begin
+            Result:=NativeInt(@scale);
+			DataType:=dtDouble;
+       end
+
+		else
+
+       if StrEqu(ParamName,'delta') then begin
+            Result:=NativeInt(@delta);
+			DataType:=dtDouble;
+       end
+
+
+    end
+end;
+
+function TSCHARR.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+begin
+   Result:=0;
+  case Action of
+     i_GetCount:    begin
+                      cY[0] := 1;
+                   end;
+    i_GetInit:     begin
+                     Result:=1;
+                   end;
+  else
+    Result:=inherited InfoFunc(Action,aParameter);
+  end
+end;
+
+function   TSCHARR.RunFunc;
+var res:Integer;
+begin
+ Result:=0;
+ case Action of
+ 	f_InitState:
+		begin
+		Result:=0;
+		end;
+	f_GoodStep:
+		begin
+
+               src := pPointer(@U[0].Arr^[0])^;
+               dst  := pPointer(@Y[0].Arr^[0])^;
+
+               res := sim_scharr(src, @dst, ddepth, dx, dy,scale,delta);
+               if res = 0 then
+               begin
+                  pPointer(@Y[0].Arr^[0])^:=dst;
+               end
+               else
+               begin
+                 pPointer(@Y[0].Arr^[0])^:=nil;
+               end;
+
+		end;
+	f_Stop:
+		begin
+
+           begin
+               if res = 0 then
+               begin
+                  releaseSimMat(@dst);
+               end;
+           end;
+
+		end;
+
+    end
+end;
+
+////////////////////////////////////////////////////////////////////////////
+/////                                     TLAPLACIAN                  //////
+////////////////////////////////////////////////////////////////////////////
+
+
+function    TLAPLACIAN.GetParamID;
+begin
+    Result:=inherited GetParamId(ParamName,DataType,IsConst);
+    if Result = -1 then begin
+
+       if StrEqu(ParamName,'ddepth') then begin
+            Result:=NativeInt(@ddepth);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'ksize') then begin
+            Result:=NativeInt(@ksize);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'scale') then begin
+            Result:=NativeInt(@scale);
+			DataType:=dtDouble;
+       end
+
+		else
+
+       if StrEqu(ParamName,'delta') then begin
+            Result:=NativeInt(@delta);
+			DataType:=dtDouble;
+       end
+
+
+    end
+end;
+
+function TLAPLACIAN.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+begin
+   Result:=0;
+  case Action of
+     i_GetCount:    begin
+                      cY[0] := 1;
+                   end;
+    i_GetInit:     begin
+                     Result:=1;
+                   end;
+  else
+    Result:=inherited InfoFunc(Action,aParameter);
+  end
+end;
+
+function   TLAPLACIAN.RunFunc;
+var res:Integer;
+begin
+ Result:=0;
+ case Action of
+ 	f_InitState:
+		begin
+		Result:=0;
+		end;
+	f_GoodStep:
+		begin
+
+               src := pPointer(@U[0].Arr^[0])^;
+               //dst  := pPointer(@Y[0].Arr^[0])^;
+
+               res := sim_laplacian(src, @dst, ddepth, ksize,scale,delta);
+               if res = 0 then
+               begin
+                  pPointer(@Y[0].Arr^[0])^:=dst;
+               end
+               else
+               begin
+                 pPointer(@Y[0].Arr^[0])^:=nil;
+               end;
+
+		end;
+	f_Stop:
+		begin
+
+           begin
+               if res = 0 then
+               begin
+                  releaseSimMat(@dst);
+               end;
+           end;
+
+		end;
+
+    end
+end;
+
+////////////////////////////////////////////////////////////////////////////
+/////                                        TRESIZE                  //////
+////////////////////////////////////////////////////////////////////////////
+
+
+function    TRESIZE.GetParamID;
+begin
+    Result:=inherited GetParamId(ParamName,DataType,IsConst);
+    if Result = -1 then begin
+
+       if StrEqu(ParamName,'ksizeX') then begin
+            Result:=NativeInt(@ksizeX);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'ksizey') then begin
+            Result:=NativeInt(@ksizeY);
+			DataType:=dtInteger;
+       end
+
+
+    end
+end;
+
+function TRESIZE.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+begin
+   Result:=0;
+  case Action of
+     i_GetCount:    begin
+                      cY[0] := 1;
+                   end;
+    i_GetInit:     begin
+                     Result:=1;
+                   end;
+  else
+    Result:=inherited InfoFunc(Action,aParameter);
+  end
+end;
+
+function   TRESIZE.RunFunc;
+var res:Integer;
+begin
+ Result:=0;
+ case Action of
+ 	f_InitState:
+		begin
+		Result:=0;
+		end;
+	f_GoodStep:
+		begin
+
+               src := pPointer(@U[0].Arr^[0])^;
+               //dst  := pPointer(@Y[0].Arr^[0])^;
+
+               res := sim_resize(src, @dst, ksizeX, ksizeY);
+               if res = 0 then
+               begin
+                  pPointer(@Y[0].Arr^[0])^:=dst;
+               end
+               else
+               begin
+                 pPointer(@Y[0].Arr^[0])^:=nil;
+               end;
+
+		end;
+	f_Stop:
+		begin
+
+           begin
+               if res = 0 then
+               begin
+                  releaseSimMat(@dst);
+               end;
+           end;
+
+		end;
+
+    end
+end;
+
+////////////////////////////////////////////////////////////////////////////
+/////                                       TRESIZEP                  //////
+////////////////////////////////////////////////////////////////////////////
+
+
+function    TRESIZEP.GetParamID;
+begin
+    Result:=inherited GetParamId(ParamName,DataType,IsConst);
+    if Result = -1 then begin
+
+       if StrEqu(ParamName,'ksizeX') then begin
+            Result:=NativeInt(@ksizeX);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'ksizeY') then begin
+            Result:=NativeInt(@ksizeY);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'fx') then begin
+            Result:=NativeInt(@fx);
+			DataType:=dtDouble;
+       end
+
+		else
+
+       if StrEqu(ParamName,'fy') then begin
+            Result:=NativeInt(@fy);
+			DataType:=dtDouble;
+       end
+
+		else
+
+       if StrEqu(ParamName,'interpolation') then begin
+            Result:=NativeInt(@interpolation);
+			DataType:=dtInteger;
+       end
+
+
+    end
+end;
+
+function TRESIZEP.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+begin
+   Result:=0;
+  case Action of
+     i_GetCount:    begin
+                      cY[0] := 1;
+                   end;
+    i_GetInit:     begin
+                     Result:=1;
+                   end;
+  else
+    Result:=inherited InfoFunc(Action,aParameter);
+  end
+end;
+
+function   TRESIZEP.RunFunc;
+var res:Integer;
+begin
+ Result:=0;
+ case Action of
+ 	f_InitState:
+		begin
+		Result:=0;
+		end;
+	f_GoodStep:
+		begin
+
+               src := pPointer(@U[0].Arr^[0])^;
+               dst  := pPointer(@Y[0].Arr^[0])^;
+
+               res := sim_resizeP(src, @dst, ksizeX, ksizeY, fx,fy,interpolation);
+               if res = 0 then
+               begin
+                  pPointer(@Y[0].Arr^[0])^:=dst;
+               end
+               else
+               begin
+                 pPointer(@Y[0].Arr^[0])^:=nil;
+               end;
+
+		end;
+	f_Stop:
+		begin
+
+           begin
+               if res = 0 then
+               begin
+                  releaseSimMat(@dst);
+               end;
+           end;
+
+		end;
+
+    end
+end;
+
 ////////////////////////////////////////////////////////////////////////////
 /////                               TwarpPerspective                  //////
 ////////////////////////////////////////////////////////////////////////////
@@ -2305,7 +3108,7 @@ begin
 			DataType:=dtDouble;
        end
 
-    else
+		else
 
        if StrEqu(ParamName,'srcX4') then begin
             Result:=NativeInt(@srcPts[7]);
@@ -2360,7 +3163,8 @@ begin
             Result:=NativeInt(@dstPts[6]);
 			DataType:=dtDouble;
        end
-    else
+
+		else
 
        if StrEqu(ParamName,'dstX4') then begin
             Result:=NativeInt(@dstPts[7]);
@@ -2373,6 +3177,7 @@ begin
             Result:=NativeInt(@dstPts[8]);
 			DataType:=dtDouble;
        end
+
 
     end
 end;
@@ -2403,10 +3208,16 @@ begin
 		end;
 	f_GoodStep:
 		begin
+
                src := pPointer(@U[0].Arr^[0])^;
-               res := sim_warpPerspective(src, @dst, @srcPts[1], @dstPts[1], dsizeX,dsizeY);
-               pPointer(@Y[0].Arr^[0])^:=dst;
-               {
+               //ksizeX := U[1].Arr^[0];
+               //ksizeY := U[2].Arr^[0];
+               //anchorX := U[3].Arr^[0];
+               //anchorY := U[4].Arr^[0];   //
+
+               dst  := pPointer(@Y[0].Arr^[0])^;
+
+               res := sim_warpPerspective(src, @dst, @srcPts[1],@dstPts[1],dsizeX,dsizeY);
                if res = 0 then
                begin
                   pPointer(@Y[0].Arr^[0])^:=dst;
@@ -2415,20 +3226,152 @@ begin
                begin
                  pPointer(@Y[0].Arr^[0])^:=nil;
                end;
-               }
 
 		end;
 	f_Stop:
-		begin          {
+		begin
+
+
                if res = 0 then
                begin
                   releaseSimMat(@dst);
-               end;    }
+               end;
+
 
 		end;
 
     end
 end;
+
+////////////////////////////////////////////////////////////////////////////
+/////                                    TwarpAffine                  //////
+////////////////////////////////////////////////////////////////////////////
+
+
+function    TwarpAffine.GetParamID;
+begin
+    Result:=inherited GetParamId(ParamName,DataType,IsConst);
+    if Result = -1 then begin
+
+       if StrEqu(ParamName,'dsizeX') then begin
+            Result:=NativeInt(@dsizeX);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'dsizeY') then begin
+            Result:=NativeInt(@dsizeY);
+			DataType:=dtInteger;
+       end
+
+		else
+
+       if StrEqu(ParamName,'warpX1') then begin
+            Result:=NativeInt(@warpPts[1]);
+			DataType:=dtDouble;
+       end
+
+		else
+
+       if StrEqu(ParamName,'warpY1') then begin
+            Result:=NativeInt(@warpPts[2]);
+			DataType:=dtDouble;
+       end
+
+		else
+
+       if StrEqu(ParamName,'warpX2') then begin
+            Result:=NativeInt(@warpPts[3]);
+			DataType:=dtDouble;
+       end
+
+		else
+
+       if StrEqu(ParamName,'warpY2') then begin
+            Result:=NativeInt(@warpPts[4]);
+			DataType:=dtDouble;
+       end
+
+		else
+
+       if StrEqu(ParamName,'warpX3') then begin
+            Result:=NativeInt(@warpPts[5]);
+			DataType:=dtDouble;
+       end
+
+		else
+
+       if StrEqu(ParamName,'warpY3') then begin
+            Result:=NativeInt(@warpPts[6]);
+			DataType:=dtDouble;
+       end
+
+
+    end
+end;
+
+function TwarpAffine.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+begin
+   Result:=0;
+  case Action of
+     i_GetCount:    begin
+                      cY[0] := 1;
+                   end;
+    i_GetInit:     begin
+                     Result:=1;
+                   end;
+  else
+    Result:=inherited InfoFunc(Action,aParameter);
+  end
+end;
+
+function   TwarpAffine.RunFunc;
+var res:Integer;
+begin
+ Result:=0;
+ case Action of
+ 	f_InitState:
+		begin
+		Result:=0;
+		end;
+	f_GoodStep:
+		begin
+
+               src := pPointer(@U[0].Arr^[0])^;
+               //ksizeX := U[1].Arr^[0];
+               //ksizeY := U[2].Arr^[0];
+               //anchorX := U[3].Arr^[0];
+               //anchorY := U[4].Arr^[0];   //
+
+               dst  := pPointer(@Y[0].Arr^[0])^;
+
+               res := sim_warpAffine(src, @dst, @warpPts[1],dsizeX,dsizeY,flags);
+               if res = 0 then
+               begin
+                  pPointer(@Y[0].Arr^[0])^:=dst;
+               end
+               else
+               begin
+                 pPointer(@Y[0].Arr^[0])^:=nil;
+               end;
+
+		end;
+	f_Stop:
+		begin
+
+
+               if res = 0 then
+               begin
+                  releaseSimMat(@dst);
+               end;
+
+
+		end;
+
+    end
+end;
+
 
 //***********************************************************************//
 //                    Раздел инициализации                               //
@@ -2460,6 +3403,7 @@ bitwiseAND :=  GetProcAddress(hDll, 'bitwiseAND');
 bitwiseOR :=  GetProcAddress(hDll, 'bitwiseOR');
 bitwiseNO :=  GetProcAddress(hDll, 'bitwiseNO');
 bitwiseXOR :=  GetProcAddress(hDll, 'bitwiseXOR');
+matrixMUL :=  GetProcAddress(hDll, 'matrixMUL');
 perElementAddWeighted :=  GetProcAddress(hDll, 'perElementAddWeighted');
 perElementDIV :=  GetProcAddress(hDll, 'perElementDIV');
 perElementMUL :=  GetProcAddress(hDll, 'perElementMUL');
@@ -2469,6 +3413,7 @@ sim_threshold :=  GetProcAddress(hDll, 'sim_threshold');
 sim_adaptiveThreshold :=  GetProcAddress(hDll, 'sim_adaptiveThreshold');
 sim_bilateralFilter :=  GetProcAddress(hDll, 'sim_bilateralFilter');
 sim_blur :=  GetProcAddress(hDll, 'sim_blur');
+sim_gaussianBlur :=  GetProcAddress(hDll, 'sim_gaussianBlur');
 sim_boxFilter :=  GetProcAddress(hDll, 'sim_boxFilter');
 sim_canny :=  GetProcAddress(hDll, 'sim_canny');
 sim_cornerHarris :=  GetProcAddress(hDll, 'sim_cornerHarris');
@@ -2476,8 +3421,14 @@ sim_dilate :=  GetProcAddress(hDll, 'sim_dilate');
 sim_erode :=  GetProcAddress(hDll, 'sim_erode');
 sim_split :=  GetProcAddress(hDll, 'sim_split');
 sim_inRange :=  GetProcAddress(hDll, 'sim_inRange');
-sim_warpPerspective  :=  GetProcAddress(hDll, 'sim_warpPerspective');
-draw_lines  :=  GetProcAddress(hDll, 'draw_lines');
+sim_merge :=  GetProcAddress(hDll, 'sim_merge');
+sim_sobel :=  GetProcAddress(hDll, 'sim_sobel');
+sim_scharr :=  GetProcAddress(hDll, 'sim_scharr');
+sim_laplacian :=  GetProcAddress(hDll, 'sim_laplacian');
+sim_resize :=  GetProcAddress(hDll, 'sim_resize');
+sim_resizeP :=  GetProcAddress(hDll, 'sim_resizeP');
+sim_warpPerspective :=  GetProcAddress(hDll, 'sim_warpPerspective');
+sim_warpAffine :=  GetProcAddress(hDll, 'sim_warpAffine');
 
 finalization
   if hDll <> 0 then FreeLibrary(hDll);

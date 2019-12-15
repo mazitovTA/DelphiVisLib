@@ -61,26 +61,28 @@ type
   //    в соответствии с этой таблицей создаются соответсвующие run-объекты   //
   //**************************************************************************//
 const
-  ClassTable:array[0..25] of TClassRecord =
+  ClassTable:array[0..33] of TClassRecord =
   (
     //Блоки для расчёта
     (Name:'TFRAMESOURCE';        RunClass:TFRAMESOURCE),
     (Name:'TIMREAD';             RunClass:TIMREAD),
     (Name:'TIMSHOW';             RunClass:TIMSHOW),
-    (Name:'TCOLORCONVERT';       RunClass:TCOLORCONVERT),
+    (Name:'TCONVERTCOLOR';       RunClass:TCONVERTCOLOR),
     (Name:'TBITWISEAND';         RunClass:TBITWISEAND),
     (Name:'TBITWISEOR';          RunClass:TBITWISEOR),
     (Name:'TBITWISENO';          RunClass:TBITWISENO),
     (Name:'TBITWISEXOR';         RunClass:TBITWISEXOR),
+    (Name:'TmatrixMUL';          RunClass:TmatrixMUL),
     (Name:'TperElementAddWeighted';RunClass:TperElementAddWeighted),
     (Name:'TperElementDIV';      RunClass:TperElementDIV),
     (Name:'TperElementMUL';      RunClass:TperElementMUL),
     (Name:'TperElementADDV';     RunClass:TperElementADDV),
     (Name:'TperElementMULV';     RunClass:TperElementMULV),
     (Name:'TTRESHOLD';           RunClass:TTRESHOLD),
-    (Name:'TADAPTRESHOLD';       RunClass:TADAPTRESHOLD),
-    (Name:'TBILATERATEFILTER';   RunClass:TBILATERATEFILTER),
+    (Name:'TADAPTIVETHRESHOLD';  RunClass:TADAPTIVETHRESHOLD),
+    (Name:'TBILATERALFILTER';    RunClass:TBILATERALFILTER),
     (Name:'TBLUR';               RunClass:TBLUR),
+    (Name:'TGAUSSIANBLUR';       RunClass:TGAUSSIANBLUR),
     (Name:'TBOXFILTER';          RunClass:TBOXFILTER),
     (Name:'TCANNY';              RunClass:TCANNY),
     (Name:'TCORNERHARRIS';       RunClass:TCORNERHARRIS),
@@ -88,8 +90,14 @@ const
     (Name:'TERODE';              RunClass:TERODE),
     (Name:'TSPLIT';              RunClass:TSPLIT),
     (Name:'TINRANGE';            RunClass:TINRANGE),
+    (Name:'TMERGE';              RunClass:TMERGE),
+    (Name:'TSOBEL';              RunClass:TSOBEL),
+    (Name:'TSCHARR';             RunClass:TSCHARR),
+    (Name:'TLAPLACIAN';          RunClass:TLAPLACIAN),
+    (Name:'TRESIZE';             RunClass:TRESIZE),
+    (Name:'TRESIZEP';            RunClass:TRESIZEP),
     (Name:'TwarpPerspective';    RunClass:TwarpPerspective),
-    (Name:'TLANE';               RunClass:TLANE)
+    (Name:'TwarpAffine';         RunClass:TwarpAffine)
   );
 
   //Это процедура создания объектов
