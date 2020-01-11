@@ -317,7 +317,6 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    blocksize: integer;
     ksize: integer;
     kshape: integer;
     function InfoFunc(Action: integer; aParameter: NativeInt)
@@ -331,7 +330,6 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    blocksize: integer;
     ksize: integer;
     kshape: integer;
     function InfoFunc(Action: integer; aParameter: NativeInt)
@@ -560,9 +558,9 @@ var
     : integer; cdecl;
   sim_cornerHarris: function(src: Pointer; dst: pPointer; blocksize: integer;
     ksize: integer; k: RealType): integer; cdecl;
-  sim_dilate: function(src: Pointer; dst: pPointer; blocksize: integer;
+  sim_dilate: function(src: Pointer; dst: pPointer;
     ksize: integer; kshape: integer): integer; cdecl;
-  sim_erode: function(src: Pointer; dst: pPointer; blocksize: integer;
+  sim_erode: function(src: Pointer; dst: pPointer;
     ksize: integer; kshape: integer): integer; cdecl;
   sim_roi: function(src: Pointer; dst: pPointer; roix: integer; roiy: integer;
     roiw: integer; roih: integer): integer; cdecl;
@@ -2331,14 +2329,6 @@ begin
   if Result = -1 then
   begin
 
-    if StrEqu(ParamName, 'blocksize') then
-    begin
-      Result := NativeInt(@blocksize);
-      DataType := dtInteger;
-    end
-
-    else
-
       if StrEqu(ParamName, 'ksize') then
     begin
       Result := NativeInt(@ksize);
@@ -2388,7 +2378,7 @@ begin
     f_GoodStep:
       begin
         src := pPointer(@U[0].Arr^[0])^;
-        res := sim_dilate(src, @dst, blocksize, ksize, integer(kshape));
+        res := sim_dilate(src, @dst, ksize, integer(kshape));
         if res = 0 then
         begin
           pPointer(@Y[0].Arr^[0])^ := dst;
@@ -2416,14 +2406,6 @@ begin
   Result := inherited GetParamID(ParamName, DataType, IsConst);
   if Result = -1 then
   begin
-
-    if StrEqu(ParamName, 'blocksize') then
-    begin
-      Result := NativeInt(@blocksize);
-      DataType := dtInteger;
-    end
-
-    else
 
       if StrEqu(ParamName, 'ksize') then
     begin
@@ -2472,7 +2454,7 @@ begin
     f_GoodStep:
       begin
         src := pPointer(@U[0].Arr^[0])^;
-        res := sim_erode(src, @dst, blocksize, ksize, integer(kshape));
+        res := sim_erode(src, @dst, ksize, integer(kshape));
         if res = 0 then
         begin
           pPointer(@Y[0].Arr^[0])^ := dst;
