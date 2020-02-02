@@ -7,7 +7,31 @@ uses Windows, Classes, DataTypes, SysUtils, RunObjts, uExtMath, IntArrays;
 
 type
   pPointer = ^Pointer;
-  TConversionType = (BGR_2_RGB, RGBA_2_RGB, RGB_2_BGR, RGB_2_GRAY, RGB_2_HSV);
+  TConversionType = ( COLOR_BGR2BGRA, // 0,
+                      COLOR_RGB2RGBA, // 0,
+                      COLOR_BGRA2BGR, // 1,
+                      COLOR_RGBA2RGB, // 1,
+                      COLOR_BGR2RGBA, // 2,
+                      COLOR_RGB2BGRA, // 2,
+                      COLOR_RGBA2BGR, // 3,
+                      COLOR_BGRA2RGB, // 3,
+                      COLOR_BGR2RGB, // 4,
+                      COLOR_RGB2BGR, // 4,
+                      COLOR_BGRA2RGBA, // 5,
+                      COLOR_RGBA2BGRA, // 5,
+                      COLOR_BGR2GRAY, // 6,
+                      COLOR_RGB2GRAY, // 7,
+                      COLOR_GRAY2BGR, // 8,
+                      COLOR_GRAY2RGB, // 8,
+                      COLOR_BGR2HSV, // 40,
+                      COLOR_RGB2HSV, // 41,
+                      COLOR_BGR2HLS, // 52,
+                      COLOR_RGB2HLS, // 53,
+                      COLOR_HSV2BGR, // 54,
+                      COLOR_HSV2RGB, // 55,
+                      COLOR_HLS2BGR, // 60,
+                      COLOR_HLS2RGB  // 61,
+                      );
   TStructureElement = (MORPH_RECT, MORPH_CROSS, MORPH_ELLIPSE);
   TInterpolation = (INTER_NEAREST, INTER_LINEAR, INTER_CUBIC, INTER_AREA);
 
@@ -851,16 +875,54 @@ begin
       begin
         src := pPointer(@U[0].Arr^[0])^;
         Case code of
-          integer(BGR_2_RGB):
-            res := sim_convertColor(src, @dst, 4);
-          integer(RGBA_2_RGB):
+          integer(COLOR_BGR2BGRA):
+            res := sim_convertColor(src, @dst, 0);
+          integer(COLOR_RGB2RGBA):
+            res := sim_convertColor(src, @dst, 0);
+          integer(COLOR_BGRA2BGR):
             res := sim_convertColor(src, @dst, 1);
-          integer(RGB_2_BGR):
+          integer(COLOR_RGBA2RGB):
+            res := sim_convertColor(src, @dst, 1);
+          integer(COLOR_BGR2RGBA):
+            res := sim_convertColor(src, @dst, 2);
+          integer(COLOR_RGB2BGRA):
+            res := sim_convertColor(src, @dst, 2);
+          integer(COLOR_RGBA2BGR):
+            res := sim_convertColor(src, @dst, 3);
+          integer(COLOR_BGRA2RGB):
+            res := sim_convertColor(src, @dst, 3);
+          integer(COLOR_BGR2RGB):
             res := sim_convertColor(src, @dst, 4);
-          integer(RGB_2_GRAY):
+          integer(COLOR_RGB2BGR):
+            res := sim_convertColor(src, @dst, 4);
+          integer(COLOR_BGRA2RGBA):
+            res := sim_convertColor(src, @dst, 5);
+          integer(COLOR_RGBA2BGRA):
+            res := sim_convertColor(src, @dst, 5);
+          integer(COLOR_BGR2GRAY):
+            res := sim_convertColor(src, @dst, 6);
+          integer(COLOR_RGB2GRAY):
             res := sim_convertColor(src, @dst, 7);
-          integer(RGB_2_HSV):
+          integer(COLOR_GRAY2BGR):
+            res := sim_convertColor(src, @dst, 8);
+          integer(COLOR_GRAY2RGB):
+            res := sim_convertColor(src, @dst, 8);
+          integer(COLOR_BGR2HSV):
+            res := sim_convertColor(src, @dst, 40);
+          integer(COLOR_RGB2HSV):
             res := sim_convertColor(src, @dst, 41);
+          integer(COLOR_BGR2HLS):
+            res := sim_convertColor(src, @dst, 52);
+          integer(COLOR_RGB2HLS):
+            res := sim_convertColor(src, @dst, 53);
+          integer(COLOR_HSV2BGR):
+            res := sim_convertColor(src, @dst, 54);
+          integer(COLOR_HSV2RGB):
+            res := sim_convertColor(src, @dst, 55);
+          integer(COLOR_HLS2BGR):
+            res := sim_convertColor(src, @dst, 60);
+          integer(COLOR_HLS2RGB):
+            res := sim_convertColor(src, @dst, 61);
         End;
         if res = 0 then
         begin
