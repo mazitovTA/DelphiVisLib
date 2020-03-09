@@ -6,3 +6,5 @@ vision_lib.stat
 *.ini
 
 __recovery/
+
+*.mgr

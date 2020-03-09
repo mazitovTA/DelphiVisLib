@@ -7,31 +7,31 @@ uses Windows, Classes, DataTypes, SysUtils, RunObjts, uExtMath, IntArrays;
 
 type
   pPointer = ^Pointer;
-  TConversionType = ( COLOR_BGR2BGRA, // 0,
-                      COLOR_RGB2RGBA, // 0,
-                      COLOR_BGRA2BGR, // 1,
-                      COLOR_RGBA2RGB, // 1,
-                      COLOR_BGR2RGBA, // 2,
-                      COLOR_RGB2BGRA, // 2,
-                      COLOR_RGBA2BGR, // 3,
-                      COLOR_BGRA2RGB, // 3,
-                      COLOR_BGR2RGB, // 4,
-                      COLOR_RGB2BGR, // 4,
-                      COLOR_BGRA2RGBA, // 5,
-                      COLOR_RGBA2BGRA, // 5,
-                      COLOR_BGR2GRAY, // 6,
-                      COLOR_RGB2GRAY, // 7,
-                      COLOR_GRAY2BGR, // 8,
-                      COLOR_GRAY2RGB, // 8,
-                      COLOR_BGR2HSV, // 40,
-                      COLOR_RGB2HSV, // 41,
-                      COLOR_BGR2HLS, // 52,
-                      COLOR_RGB2HLS, // 53,
-                      COLOR_HSV2BGR, // 54,
-                      COLOR_HSV2RGB, // 55,
-                      COLOR_HLS2BGR, // 60,
-                      COLOR_HLS2RGB  // 61,
-                      );
+  TConversionType = (COLOR_BGR2BGRA, // 0,
+    COLOR_RGB2RGBA, // 0,
+    COLOR_BGRA2BGR, // 1,
+    COLOR_RGBA2RGB, // 1,
+    COLOR_BGR2RGBA, // 2,
+    COLOR_RGB2BGRA, // 2,
+    COLOR_RGBA2BGR, // 3,
+    COLOR_BGRA2RGB, // 3,
+    COLOR_BGR2RGB, // 4,
+    COLOR_RGB2BGR, // 4,
+    COLOR_BGRA2RGBA, // 5,
+    COLOR_RGBA2BGRA, // 5,
+    COLOR_BGR2GRAY, // 6,
+    COLOR_RGB2GRAY, // 7,
+    COLOR_GRAY2BGR, // 8,
+    COLOR_GRAY2RGB, // 8,
+    COLOR_BGR2HSV, // 40,
+    COLOR_RGB2HSV, // 41,
+    COLOR_BGR2HLS, // 52,
+    COLOR_RGB2HLS, // 53,
+    COLOR_HSV2BGR, // 54,
+    COLOR_HSV2RGB, // 55,
+    COLOR_HLS2BGR, // 60,
+    COLOR_HLS2RGB // 61,
+    );
   TStructureElement = (MORPH_RECT, MORPH_CROSS, MORPH_ELLIPSE);
   TInterpolation = (INTER_NEAREST, INTER_LINEAR, INTER_CUBIC, INTER_AREA);
 
@@ -468,19 +468,6 @@ type
     dst: Pointer;
     ksizeX: integer;
     ksizeY: integer;
-    function InfoFunc(Action: integer; aParameter: NativeInt)
-      : NativeInt; override;
-    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
-    function GetParamID(const ParamName: string; var DataType: TDataType;
-      var IsConst: boolean): NativeInt; override;
-  end;
-
-  TRESIZEP = class(TRunObject)
-  public
-    src: Pointer;
-    dst: Pointer;
-    ksizeX: integer;
-    ksizeY: integer;
     fx: RealType;
     fy: RealType;
     interpolation: integer;
@@ -515,6 +502,49 @@ type
     ch1: integer;
     ch2: integer;
     ch3: integer;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
+  TFindContous = class(TRunObject)
+  public
+    srcFrame: Pointer;
+    contours: Pointer;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+  end;
+
+  TSelectContour = class(TRunObject)
+  public
+    srcFrame: Pointer;
+    contours: Pointer;
+    contour: Pointer;
+    frame: Pointer;
+    index: integer;
+    color: integer;
+    width: integer;
+    red: integer;
+    green: integer;
+    blue: integer;
+    isDraw: integer;
+
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
+  TSelectContourArea = class(TRunObject)
+  public
+    inputContours: Pointer;
+    outputContours: Pointer;
+    minArea: Double;
+    maxArea: Double;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -582,10 +612,10 @@ var
     : integer; cdecl;
   sim_cornerHarris: function(src: Pointer; dst: pPointer; blocksize: integer;
     ksize: integer; k: RealType): integer; cdecl;
-  sim_dilate: function(src: Pointer; dst: pPointer;
-    ksize: integer; kshape: integer): integer; cdecl;
-  sim_erode: function(src: Pointer; dst: pPointer;
-    ksize: integer; kshape: integer): integer; cdecl;
+  sim_dilate: function(src: Pointer; dst: pPointer; ksize: integer;
+    kshape: integer): integer; cdecl;
+  sim_erode: function(src: Pointer; dst: pPointer; ksize: integer;
+    kshape: integer): integer; cdecl;
   sim_roi: function(src: Pointer; dst: pPointer; roix: integer; roiy: integer;
     roiw: integer; roih: integer): integer; cdecl;
   sim_split: function(src: Pointer; dst1: pPointer; dst2: pPointer;
@@ -601,13 +631,19 @@ var
   sim_laplacian: function(src: Pointer; dst: pPointer; ksize: integer;
     scale: RealType; delta: RealType): integer; cdecl;
   sim_resize: function(src: Pointer; dst: pPointer; ksizeX: integer;
-    ksizeY: integer): integer; cdecl;
-  sim_resizeP: function(src: Pointer; dst: pPointer; ksizeX: integer;
     ksizeY: integer; interpolation: integer): integer; cdecl;
   sim_warpPerspective: function(src: Pointer; dst: pPointer; srcPts: Pointer;
     dstPts: Pointer; dsizeX: integer; dsizeY: integer): integer; cdecl;
   sim_floodFill: function(src: Pointer; dst: pPointer; px: integer; py: integer;
     ch1: integer; ch2: integer; ch3: integer): integer; cdecl;
+
+  sim_findContours: function(srcImage: Pointer; contours: pPointer)
+    : integer; cdecl;
+  sim_selectContour: function(srcImage: Pointer; contours: Pointer;
+   // index: integer; color: integer; width: integer; draw: integer;
+    dstItmage: pPointer; result: pPointer): integer; cdecl;
+  sim_minMaxAreaContoursFilter: function(src: Pointer; dst: pPointer;
+    min: Pointer; max: Pointer): integer; cdecl;
 
 implementation
 
@@ -619,13 +655,13 @@ uses math;
 
 function TFRAMESOURCE.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'source') then
     begin
-      Result := NativeInt(@sourceName);
+      result := NativeInt(@sourceName);
       DataType := dtString;
     end
 
@@ -635,7 +671,7 @@ end;
 function TFRAMESOURCE.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -643,10 +679,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -654,13 +690,13 @@ function TFRAMESOURCE.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
 
     f_InitState:
       begin
         res := openVideoSource(@source, sourceName);
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -697,22 +733,26 @@ end;
 
 function TIMREAD.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
-
     if StrEqu(ParamName, 'source') then
     begin
-      Result := NativeInt(@sourceName);
+      result := NativeInt(@sourceName);
       DataType := dtString;
     end
-
+    else
+    if StrEqu(ParamName, 'code') then
+    begin
+      result := NativeInt(@code);
+      DataType := dtInteger;
+    end
   end
 end;
 
 function TIMREAD.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -720,10 +760,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -731,17 +771,17 @@ function TIMREAD.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
 
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
+        res := 0;
       end;
 
     f_GoodStep:
       begin
-        frame := pPointer(@U[0].Arr^[0])^;
         res := openImage(@frame, sourceName, code);
         if res = 0 then
         begin
@@ -755,14 +795,7 @@ begin
 
     f_Stop:
       begin
-
-        begin
-          if res = 0 then
-          begin
-            releaseSimMat(@frame);
-          end;
-        end;
-
+        releaseSimMat(@frame);
       end;
 
   end
@@ -774,13 +807,13 @@ end;
 
 function TIMSHOW.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'windowName') then
     begin
-      Result := NativeInt(@windowName);
+      result := NativeInt(@windowName);
       DataType := dtString;
     end
 
@@ -788,7 +821,7 @@ begin
 
       if StrEqu(ParamName, 'delay') then
     begin
-      Result := NativeInt(@delay);
+      result := NativeInt(@delay);
       DataType := dtInteger;
     end
 
@@ -799,13 +832,13 @@ function TIMSHOW.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
 
     f_InitState:
       begin
         createHandledWindow(windowName);
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -817,7 +850,7 @@ begin
     f_Stop:
       begin
         destroyWindowByName(windowName);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -829,13 +862,13 @@ end;
 
 function TCONVERTCOLOR.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'code') then
     begin
-      Result := NativeInt(@code);
+      result := NativeInt(@code);
       DataType := dtInteger;
     end
 
@@ -845,7 +878,7 @@ end;
 function TCONVERTCOLOR.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -853,10 +886,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -864,12 +897,12 @@ function TCONVERTCOLOR.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
     f_GoodStep:
       begin
@@ -937,7 +970,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -949,13 +982,13 @@ end;
 
 function TBITWISEAND.GetParamID;
 begin
-  Result := -1;
+  result := -1;
 end;
 
 function TBITWISEAND.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -963,10 +996,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -974,13 +1007,13 @@ function TBITWISEAND.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
 
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
     f_GoodStep:
       begin
@@ -1000,7 +1033,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -1012,12 +1045,12 @@ end;
 
 function TBITWISEOR.GetParamID;
 begin
-  Result := -1;
+  result := -1;
 end;
 
 function TBITWISEOR.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1025,10 +1058,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1036,12 +1069,12 @@ function TBITWISEOR.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
     f_GoodStep:
       begin
@@ -1063,7 +1096,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -1075,12 +1108,12 @@ end;
 
 function TBITWISENO.GetParamID;
 begin
-  Result := -1;
+  result := -1;
 end;
 
 function TBITWISENO.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1088,10 +1121,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1099,12 +1132,12 @@ function TBITWISENO.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -1124,7 +1157,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -1136,13 +1169,13 @@ end;
 
 function TBITWISEXOR.GetParamID;
 begin
-  Result := -1;
+  result := -1;
 end;
 
 function TBITWISEXOR.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1150,10 +1183,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1161,12 +1194,12 @@ function TBITWISEXOR.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -1187,7 +1220,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -1199,12 +1232,12 @@ end;
 
 function TmatrixMUL.GetParamID;
 begin
-  Result := -1;
+  result := -1;
 end;
 
 function TmatrixMUL.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1212,10 +1245,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1223,12 +1256,12 @@ function TmatrixMUL.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
     f_GoodStep:
       begin
@@ -1249,7 +1282,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -1261,13 +1294,13 @@ end;
 
 function TperElementAddWeighted.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'alpha') then
     begin
-      Result := NativeInt(@alpha);
+      result := NativeInt(@alpha);
       DataType := dtDouble;
     end
 
@@ -1275,7 +1308,7 @@ begin
 
       if StrEqu(ParamName, 'beta') then
     begin
-      Result := NativeInt(@beta);
+      result := NativeInt(@beta);
       DataType := dtDouble;
     end
 
@@ -1285,7 +1318,7 @@ end;
 function TperElementAddWeighted.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1293,10 +1326,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1304,12 +1337,12 @@ function TperElementAddWeighted.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -1331,7 +1364,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
   end
 end;
@@ -1342,12 +1375,12 @@ end;
 
 function TABSDIFF.GetParamID;
 begin
-  Result := -1;
+  result := -1;
 end;
 
 function TABSDIFF.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1355,10 +1388,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1366,12 +1399,12 @@ function TABSDIFF.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -1392,7 +1425,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -1404,12 +1437,12 @@ end;
 
 function TperElementMUL.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
     if StrEqu(ParamName, 'scale') then
     begin
-      Result := NativeInt(@scale);
+      result := NativeInt(@scale);
       DataType := dtDouble;
     end
   end
@@ -1418,7 +1451,7 @@ end;
 function TperElementMUL.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1426,10 +1459,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1437,12 +1470,12 @@ function TperElementMUL.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -1463,7 +1496,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -1475,13 +1508,13 @@ end;
 
 function TperElementADD.GetParamID;
 begin
-  Result := -1;
+  result := -1;
 end;
 
 function TperElementADD.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1489,10 +1522,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1500,12 +1533,12 @@ function TperElementADD.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -1526,7 +1559,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -1538,12 +1571,12 @@ end;
 
 function TperElementADDV.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
     if StrEqu(ParamName, 'Value') then
     begin
-      Result := NativeInt(@Value);
+      result := NativeInt(@Value);
       DataType := dtDouble;
     end
   end
@@ -1552,7 +1585,7 @@ end;
 function TperElementADDV.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1560,10 +1593,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1571,12 +1604,12 @@ function TperElementADDV.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -1596,7 +1629,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -1608,12 +1641,12 @@ end;
 
 function TperElementMULV.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
     if StrEqu(ParamName, 'Value') then
     begin
-      Result := NativeInt(@Value);
+      result := NativeInt(@Value);
       DataType := dtDouble;
     end
   end
@@ -1622,7 +1655,7 @@ end;
 function TperElementMULV.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1630,10 +1663,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1641,12 +1674,12 @@ function TperElementMULV.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
         pPointer(@Y[0].Arr^[0])^ := nil;
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -1666,7 +1699,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -1678,13 +1711,13 @@ end;
 
 function TTRESHOLD.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'Thresh') then
     begin
-      Result := NativeInt(@Thresh);
+      result := NativeInt(@Thresh);
       DataType := dtDouble;
     end
 
@@ -1692,7 +1725,7 @@ begin
 
       if StrEqu(ParamName, 'Maxval') then
     begin
-      Result := NativeInt(@Maxval);
+      result := NativeInt(@Maxval);
       DataType := dtDouble;
     end
 
@@ -1700,7 +1733,7 @@ begin
 
       if StrEqu(ParamName, 'codetype') then
     begin
-      Result := NativeInt(@codetype);
+      result := NativeInt(@codetype);
       DataType := dtInteger;
     end
 
@@ -1709,7 +1742,7 @@ end;
 
 function TTRESHOLD.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1717,10 +1750,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1728,11 +1761,11 @@ function TTRESHOLD.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -1752,7 +1785,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
   end
 end;
@@ -1763,32 +1796,32 @@ end;
 
 function TADAPTIVETHRESHOLD.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
     if StrEqu(ParamName, 'maxValue') then
     begin
-      Result := NativeInt(@maxValue);
+      result := NativeInt(@maxValue);
       DataType := dtDouble;
     end
     else if StrEqu(ParamName, 'adaptiveMethod') then
     begin
-      Result := NativeInt(@adaptiveMethod);
+      result := NativeInt(@adaptiveMethod);
       DataType := dtInteger;
     end
     else if StrEqu(ParamName, 'ThresholdType') then
     begin
-      Result := NativeInt(@ThresholdType);
+      result := NativeInt(@ThresholdType);
       DataType := dtInteger;
     end
     else if StrEqu(ParamName, 'blocksize') then
     begin
-      Result := NativeInt(@blocksize);
+      result := NativeInt(@blocksize);
       DataType := dtInteger;
     end
     else if StrEqu(ParamName, 'C') then
     begin
-      Result := NativeInt(@C);
+      result := NativeInt(@C);
       DataType := dtDouble;
     end
   end
@@ -1797,7 +1830,7 @@ end;
 function TADAPTIVETHRESHOLD.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1805,10 +1838,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1816,11 +1849,11 @@ function TADAPTIVETHRESHOLD.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -1841,7 +1874,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
   end
 end;
@@ -1852,22 +1885,22 @@ end;
 
 function TBILATERALFILTER.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
     if StrEqu(ParamName, 'd') then
     begin
-      Result := NativeInt(@d);
+      result := NativeInt(@d);
       DataType := dtInteger;
     end
     else if StrEqu(ParamName, 'SigmaColor') then
     begin
-      Result := NativeInt(@SigmaColor);
+      result := NativeInt(@SigmaColor);
       DataType := dtDouble;
     end
     else if StrEqu(ParamName, 'SigmaSpace') then
     begin
-      Result := NativeInt(@SigmaSpace);
+      result := NativeInt(@SigmaSpace);
       DataType := dtDouble;
     end
   end
@@ -1876,7 +1909,7 @@ end;
 function TBILATERALFILTER.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1884,10 +1917,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1895,11 +1928,11 @@ function TBILATERALFILTER.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -1919,7 +1952,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -1931,13 +1964,13 @@ end;
 
 function TBLUR.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'ksizeX') then
     begin
-      Result := NativeInt(@ksizeX);
+      result := NativeInt(@ksizeX);
       DataType := dtInteger;
     end
 
@@ -1945,7 +1978,7 @@ begin
 
       if StrEqu(ParamName, 'ksizeY') then
     begin
-      Result := NativeInt(@ksizeY);
+      result := NativeInt(@ksizeY);
       DataType := dtInteger;
     end
 
@@ -1954,7 +1987,7 @@ end;
 
 function TBLUR.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -1962,10 +1995,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -1973,11 +2006,11 @@ function TBLUR.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
     f_GoodStep:
       begin
@@ -1996,7 +2029,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -2007,13 +2040,13 @@ end;
 /// /////////////////////////////////////////////////////////////////////////
 function TGAUSSIANBLUR.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'ksizeX') then
     begin
-      Result := NativeInt(@ksizeX);
+      result := NativeInt(@ksizeX);
       DataType := dtInteger;
     end
 
@@ -2021,7 +2054,7 @@ begin
 
       if StrEqu(ParamName, 'ksizeY') then
     begin
-      Result := NativeInt(@ksizeY);
+      result := NativeInt(@ksizeY);
       DataType := dtInteger;
     end
 
@@ -2029,7 +2062,7 @@ begin
 
       if StrEqu(ParamName, 'sigmaX') then
     begin
-      Result := NativeInt(@sigmaX);
+      result := NativeInt(@sigmaX);
       DataType := dtDouble;
     end
 
@@ -2037,7 +2070,7 @@ begin
 
       if StrEqu(ParamName, 'sigmaY') then
     begin
-      Result := NativeInt(@sigmaY);
+      result := NativeInt(@sigmaY);
       DataType := dtDouble;
     end
 
@@ -2047,7 +2080,7 @@ end;
 function TGAUSSIANBLUR.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2055,10 +2088,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -2066,12 +2099,12 @@ function TGAUSSIANBLUR.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
 
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -2091,7 +2124,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -2102,13 +2135,13 @@ end;
 /// /////////////////////////////////////////////////////////////////////////
 function TBOXFILTER.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'ksizeX') then
     begin
-      Result := NativeInt(@ksizeX);
+      result := NativeInt(@ksizeX);
       DataType := dtInteger;
     end
 
@@ -2116,7 +2149,7 @@ begin
 
       if StrEqu(ParamName, 'ksizeY') then
     begin
-      Result := NativeInt(@ksizeY);
+      result := NativeInt(@ksizeY);
       DataType := dtInteger;
     end
 
@@ -2124,7 +2157,7 @@ begin
 
       if StrEqu(ParamName, 'anchorX') then
     begin
-      Result := NativeInt(@anchorX);
+      result := NativeInt(@anchorX);
       DataType := dtInteger;
     end
 
@@ -2132,7 +2165,7 @@ begin
 
       if StrEqu(ParamName, 'anchorY') then
     begin
-      Result := NativeInt(@anchorY);
+      result := NativeInt(@anchorY);
       DataType := dtInteger;
     end
 
@@ -2140,7 +2173,7 @@ begin
 
       if StrEqu(ParamName, 'normalize') then
     begin
-      Result := NativeInt(@normalize);
+      result := NativeInt(@normalize);
       DataType := dtInteger;
     end
 
@@ -2149,7 +2182,7 @@ end;
 
 function TBOXFILTER.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2157,10 +2190,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -2168,12 +2201,12 @@ function TBOXFILTER.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
 
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -2194,7 +2227,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -2206,13 +2239,13 @@ end;
 
 function TCANNY.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'Threshold1') then
     begin
-      Result := NativeInt(@Threshold1);
+      result := NativeInt(@Threshold1);
       DataType := dtDouble;
     end
 
@@ -2220,7 +2253,7 @@ begin
 
       if StrEqu(ParamName, 'Threshold2') then
     begin
-      Result := NativeInt(@Threshold2);
+      result := NativeInt(@Threshold2);
       DataType := dtDouble;
     end
 
@@ -2228,7 +2261,7 @@ begin
 
       if StrEqu(ParamName, 'apertureSize') then
     begin
-      Result := NativeInt(@apertureSize);
+      result := NativeInt(@apertureSize);
       DataType := dtInteger;
     end
 
@@ -2236,7 +2269,7 @@ begin
 
       if StrEqu(ParamName, 'L2gradient') then
     begin
-      Result := NativeInt(@L2gradient);
+      result := NativeInt(@L2gradient);
       DataType := dtBool;
     end
 
@@ -2245,7 +2278,7 @@ end;
 
 function TCANNY.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2253,10 +2286,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -2264,12 +2297,12 @@ function TCANNY.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
 
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -2290,7 +2323,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
   end
 end;
@@ -2300,13 +2333,13 @@ end;
 /// /////////////////////////////////////////////////////////////////////////
 function TCORNERHARRIS.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'blocksize') then
     begin
-      Result := NativeInt(@blocksize);
+      result := NativeInt(@blocksize);
       DataType := dtInteger;
     end
 
@@ -2314,7 +2347,7 @@ begin
 
       if StrEqu(ParamName, 'ksize') then
     begin
-      Result := NativeInt(@ksize);
+      result := NativeInt(@ksize);
       DataType := dtInteger;
     end
 
@@ -2322,7 +2355,7 @@ begin
 
       if StrEqu(ParamName, 'k') then
     begin
-      Result := NativeInt(@k);
+      result := NativeInt(@k);
       DataType := dtDouble;
     end
 
@@ -2332,7 +2365,7 @@ end;
 function TCORNERHARRIS.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2340,10 +2373,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -2351,12 +2384,12 @@ function TCORNERHARRIS.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
 
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -2376,7 +2409,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -2387,13 +2420,13 @@ end;
 /// /////////////////////////////////////////////////////////////////////////
 function TDILATE.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
-      if StrEqu(ParamName, 'ksize') then
+    if StrEqu(ParamName, 'ksize') then
     begin
-      Result := NativeInt(@ksize);
+      result := NativeInt(@ksize);
       DataType := dtInteger;
     end
 
@@ -2401,7 +2434,7 @@ begin
 
       if StrEqu(ParamName, 'kshape') then
     begin
-      Result := NativeInt(@kshape);
+      result := NativeInt(@kshape);
       DataType := dtInteger;
     end
 
@@ -2410,7 +2443,7 @@ end;
 
 function TDILATE.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2418,10 +2451,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -2429,12 +2462,12 @@ function TDILATE.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
 
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -2454,7 +2487,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -2465,13 +2498,13 @@ end;
 /// /////////////////////////////////////////////////////////////////////////
 function TERODE.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
-      if StrEqu(ParamName, 'ksize') then
+    if StrEqu(ParamName, 'ksize') then
     begin
-      Result := NativeInt(@ksize);
+      result := NativeInt(@ksize);
       DataType := dtInteger;
     end
 
@@ -2479,7 +2512,7 @@ begin
 
       if StrEqu(ParamName, 'kShape') then
     begin
-      Result := NativeInt(@kshape);
+      result := NativeInt(@kshape);
       DataType := dtInteger;
     end
 
@@ -2488,7 +2521,7 @@ end;
 
 function TERODE.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2496,10 +2529,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -2507,11 +2540,11 @@ function TERODE.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
     f_GoodStep:
       begin
@@ -2530,7 +2563,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -2542,13 +2575,13 @@ end;
 
 function TROI.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'roix') then
     begin
-      Result := NativeInt(@roix);
+      result := NativeInt(@roix);
       DataType := dtInteger;
     end
 
@@ -2556,7 +2589,7 @@ begin
 
       if StrEqu(ParamName, 'roiy') then
     begin
-      Result := NativeInt(@roiy);
+      result := NativeInt(@roiy);
       DataType := dtInteger;
     end
 
@@ -2564,7 +2597,7 @@ begin
 
       if StrEqu(ParamName, 'roiw') then
     begin
-      Result := NativeInt(@roiw);
+      result := NativeInt(@roiw);
       DataType := dtInteger;
     end
 
@@ -2572,7 +2605,7 @@ begin
 
       if StrEqu(ParamName, 'roih') then
     begin
-      Result := NativeInt(@roih);
+      result := NativeInt(@roih);
       DataType := dtInteger;
     end
 
@@ -2581,7 +2614,7 @@ end;
 
 function TROI.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2589,10 +2622,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -2600,12 +2633,12 @@ function TROI.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
 
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -2625,7 +2658,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -2637,12 +2670,12 @@ end;
 
 function TSPLIT.GetParamID;
 begin
-  Result := -1;
+  result := -1;
 end;
 
 function TSPLIT.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2650,10 +2683,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -2661,11 +2694,11 @@ function TSPLIT.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -2702,13 +2735,13 @@ end;
 
 function TINRANGE.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'lower') then
     begin
-      Result := NativeInt(@lower);
+      result := NativeInt(@lower);
       DataType := dtDouble;
     end
 
@@ -2716,7 +2749,7 @@ begin
 
       if StrEqu(ParamName, 'upper') then
     begin
-      Result := NativeInt(@upper);
+      result := NativeInt(@upper);
       DataType := dtDouble;
     end
 
@@ -2725,7 +2758,7 @@ end;
 
 function TINRANGE.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2733,10 +2766,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -2744,12 +2777,12 @@ function TINRANGE.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
 
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -2769,7 +2802,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -2781,12 +2814,12 @@ end;
 
 function TMERGE.GetParamID;
 begin
-  Result := -1;
+  result := -1;
 end;
 
 function TMERGE.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2794,10 +2827,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -2805,11 +2838,11 @@ function TMERGE.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -2831,7 +2864,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -2843,13 +2876,13 @@ end;
 
 function TSOBEL.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'dx') then
     begin
-      Result := NativeInt(@dx);
+      result := NativeInt(@dx);
       DataType := dtInteger;
     end
 
@@ -2857,7 +2890,7 @@ begin
 
       if StrEqu(ParamName, 'dy') then
     begin
-      Result := NativeInt(@dy);
+      result := NativeInt(@dy);
       DataType := dtInteger;
     end
 
@@ -2865,7 +2898,7 @@ begin
 
       if StrEqu(ParamName, 'ksize') then
     begin
-      Result := NativeInt(@ksize);
+      result := NativeInt(@ksize);
       DataType := dtInteger;
     end
 
@@ -2873,7 +2906,7 @@ begin
 
       if StrEqu(ParamName, 'scale') then
     begin
-      Result := NativeInt(@scale);
+      result := NativeInt(@scale);
       DataType := dtDouble;
     end
 
@@ -2881,7 +2914,7 @@ begin
 
       if StrEqu(ParamName, 'delta') then
     begin
-      Result := NativeInt(@delta);
+      result := NativeInt(@delta);
       DataType := dtDouble;
     end
 
@@ -2890,7 +2923,7 @@ end;
 
 function TSOBEL.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2898,10 +2931,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -2909,11 +2942,11 @@ function TSOBEL.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
     f_GoodStep:
       begin
@@ -2932,7 +2965,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -2944,13 +2977,13 @@ end;
 
 function TSCHARR.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'dx') then
     begin
-      Result := NativeInt(@dx);
+      result := NativeInt(@dx);
       DataType := dtInteger;
     end
 
@@ -2958,7 +2991,7 @@ begin
 
       if StrEqu(ParamName, 'dy') then
     begin
-      Result := NativeInt(@dy);
+      result := NativeInt(@dy);
       DataType := dtInteger;
     end
 
@@ -2966,7 +2999,7 @@ begin
 
       if StrEqu(ParamName, 'scale') then
     begin
-      Result := NativeInt(@scale);
+      result := NativeInt(@scale);
       DataType := dtDouble;
     end
 
@@ -2974,7 +3007,7 @@ begin
 
       if StrEqu(ParamName, 'delta') then
     begin
-      Result := NativeInt(@delta);
+      result := NativeInt(@delta);
       DataType := dtDouble;
     end
 
@@ -2983,7 +3016,7 @@ end;
 
 function TSCHARR.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -2991,10 +3024,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -3002,11 +3035,11 @@ function TSCHARR.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -3026,7 +3059,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -3038,13 +3071,13 @@ end;
 
 function TLAPLACIAN.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'ksize') then
     begin
-      Result := NativeInt(@ksize);
+      result := NativeInt(@ksize);
       DataType := dtInteger;
     end
 
@@ -3052,7 +3085,7 @@ begin
 
       if StrEqu(ParamName, 'scale') then
     begin
-      Result := NativeInt(@scale);
+      result := NativeInt(@scale);
       DataType := dtDouble;
     end
 
@@ -3060,7 +3093,7 @@ begin
 
       if StrEqu(ParamName, 'delta') then
     begin
-      Result := NativeInt(@delta);
+      result := NativeInt(@delta);
       DataType := dtDouble;
     end
 
@@ -3069,7 +3102,7 @@ end;
 
 function TLAPLACIAN.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -3077,10 +3110,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -3088,11 +3121,11 @@ function TLAPLACIAN.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -3112,33 +3145,40 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
 end;
 
 /// /////////////////////////////////////////////////////////////////////////
-/// //                                        TRESIZE                  //////
+/// //                                       TRESIZE                  //////
 /// /////////////////////////////////////////////////////////////////////////
-
 function TRESIZE.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'ksizeX') then
     begin
-      Result := NativeInt(@ksizeX);
+      result := NativeInt(@ksizeX);
       DataType := dtInteger;
     end
 
     else
 
-      if StrEqu(ParamName, 'ksizey') then
+      if StrEqu(ParamName, 'ksizeY') then
     begin
-      Result := NativeInt(@ksizeY);
+      result := NativeInt(@ksizeY);
+      DataType := dtInteger;
+    end
+
+    else
+
+      if StrEqu(ParamName, 'interpolation') then
+    begin
+      result := NativeInt(@interpolation);
       DataType := dtInteger;
     end
 
@@ -3147,7 +3187,7 @@ end;
 
 function TRESIZE.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -3155,10 +3195,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -3166,17 +3206,18 @@ function TRESIZE.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
+
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
       begin
         src := pPointer(@U[0].Arr^[0])^;
-        res := sim_resize(src, @dst, ksizeX, ksizeY);
+        res := sim_resize(src, @dst, ksizeX, ksizeY, interpolation);
         if res = 0 then
         begin
           pPointer(@Y[0].Arr^[0])^ := dst;
@@ -3190,93 +3231,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
-      end;
-
-  end
-end;
-
-/// /////////////////////////////////////////////////////////////////////////
-/// //                                       TRESIZEP                  //////
-/// /////////////////////////////////////////////////////////////////////////
-function TRESIZEP.GetParamID;
-begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
-  begin
-
-    if StrEqu(ParamName, 'ksizeX') then
-    begin
-      Result := NativeInt(@ksizeX);
-      DataType := dtInteger;
-    end
-
-    else
-
-      if StrEqu(ParamName, 'ksizeY') then
-    begin
-      Result := NativeInt(@ksizeY);
-      DataType := dtInteger;
-    end
-
-    else
-
-      if StrEqu(ParamName, 'interpolation') then
-    begin
-      Result := NativeInt(@interpolation);
-      DataType := dtInteger;
-    end
-
-  end
-end;
-
-function TRESIZEP.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
-begin
-  Result := 0;
-  case Action of
-    i_GetCount:
-      begin
-        cY[0] := 1;
-      end;
-    i_GetInit:
-      begin
-        Result := 1;
-      end;
-  else
-    Result := inherited InfoFunc(Action, aParameter);
-  end
-end;
-
-function TRESIZEP.RunFunc;
-var
-  res: integer;
-begin
-  Result := 0;
-  case Action of
-
-    f_InitState:
-      begin
-        Result := 0;
-      end;
-
-    f_GoodStep:
-      begin
-        src := pPointer(@U[0].Arr^[0])^;
-        res := sim_resizeP(src, @dst, ksizeX, ksizeY, interpolation);
-        if res = 0 then
-        begin
-          pPointer(@Y[0].Arr^[0])^ := dst;
-        end
-        else
-        begin
-          pPointer(@Y[0].Arr^[0])^ := nil;
-        end;
-      end;
-
-    f_Stop:
-      begin
-        releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -3288,13 +3243,13 @@ end;
 
 function TwarpPerspective.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'dsizeX') then
     begin
-      Result := NativeInt(@dsizeX);
+      result := NativeInt(@dsizeX);
       DataType := dtInteger;
     end
 
@@ -3302,7 +3257,7 @@ begin
 
       if StrEqu(ParamName, 'dsizeY') then
     begin
-      Result := NativeInt(@dsizeY);
+      result := NativeInt(@dsizeY);
       DataType := dtInteger;
     end
 
@@ -3310,7 +3265,7 @@ begin
 
       if StrEqu(ParamName, 'srcX1') then
     begin
-      Result := NativeInt(@srcPts[1]);
+      result := NativeInt(@srcPts[1]);
       DataType := dtDouble;
     end
 
@@ -3318,7 +3273,7 @@ begin
 
       if StrEqu(ParamName, 'srcY1') then
     begin
-      Result := NativeInt(@srcPts[2]);
+      result := NativeInt(@srcPts[2]);
       DataType := dtDouble;
     end
 
@@ -3326,7 +3281,7 @@ begin
 
       if StrEqu(ParamName, 'srcX2') then
     begin
-      Result := NativeInt(@srcPts[3]);
+      result := NativeInt(@srcPts[3]);
       DataType := dtDouble;
     end
 
@@ -3334,7 +3289,7 @@ begin
 
       if StrEqu(ParamName, 'srcY2') then
     begin
-      Result := NativeInt(@srcPts[4]);
+      result := NativeInt(@srcPts[4]);
       DataType := dtDouble;
     end
 
@@ -3342,7 +3297,7 @@ begin
 
       if StrEqu(ParamName, 'srcX3') then
     begin
-      Result := NativeInt(@srcPts[5]);
+      result := NativeInt(@srcPts[5]);
       DataType := dtDouble;
     end
 
@@ -3350,7 +3305,7 @@ begin
 
       if StrEqu(ParamName, 'srcY3') then
     begin
-      Result := NativeInt(@srcPts[6]);
+      result := NativeInt(@srcPts[6]);
       DataType := dtDouble;
     end
 
@@ -3358,7 +3313,7 @@ begin
 
       if StrEqu(ParamName, 'srcX4') then
     begin
-      Result := NativeInt(@srcPts[7]);
+      result := NativeInt(@srcPts[7]);
       DataType := dtDouble;
     end
 
@@ -3366,7 +3321,7 @@ begin
 
       if StrEqu(ParamName, 'srcY4') then
     begin
-      Result := NativeInt(@srcPts[8]);
+      result := NativeInt(@srcPts[8]);
       DataType := dtDouble;
     end
 
@@ -3374,7 +3329,7 @@ begin
 
       if StrEqu(ParamName, 'dstX1') then
     begin
-      Result := NativeInt(@dstPts[1]);
+      result := NativeInt(@dstPts[1]);
       DataType := dtDouble;
     end
 
@@ -3382,7 +3337,7 @@ begin
 
       if StrEqu(ParamName, 'dstY1') then
     begin
-      Result := NativeInt(@dstPts[2]);
+      result := NativeInt(@dstPts[2]);
       DataType := dtDouble;
     end
 
@@ -3390,7 +3345,7 @@ begin
 
       if StrEqu(ParamName, 'dstX2') then
     begin
-      Result := NativeInt(@dstPts[3]);
+      result := NativeInt(@dstPts[3]);
       DataType := dtDouble;
     end
 
@@ -3398,7 +3353,7 @@ begin
 
       if StrEqu(ParamName, 'dstY2') then
     begin
-      Result := NativeInt(@dstPts[4]);
+      result := NativeInt(@dstPts[4]);
       DataType := dtDouble;
     end
 
@@ -3406,7 +3361,7 @@ begin
 
       if StrEqu(ParamName, 'dstX3') then
     begin
-      Result := NativeInt(@dstPts[5]);
+      result := NativeInt(@dstPts[5]);
       DataType := dtDouble;
     end
 
@@ -3414,7 +3369,7 @@ begin
 
       if StrEqu(ParamName, 'dstY3') then
     begin
-      Result := NativeInt(@dstPts[6]);
+      result := NativeInt(@dstPts[6]);
       DataType := dtDouble;
     end
 
@@ -3422,7 +3377,7 @@ begin
 
       if StrEqu(ParamName, 'dstX4') then
     begin
-      Result := NativeInt(@dstPts[7]);
+      result := NativeInt(@dstPts[7]);
       DataType := dtDouble;
     end
 
@@ -3430,7 +3385,7 @@ begin
 
       if StrEqu(ParamName, 'dstY4') then
     begin
-      Result := NativeInt(@dstPts[8]);
+      result := NativeInt(@dstPts[8]);
       DataType := dtDouble;
     end
 
@@ -3440,7 +3395,7 @@ end;
 function TwarpPerspective.InfoFunc(Action: integer; aParameter: NativeInt)
   : NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -3448,10 +3403,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -3459,12 +3414,12 @@ function TwarpPerspective.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
 
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -3485,7 +3440,7 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
       end;
 
   end
@@ -3497,13 +3452,13 @@ end;
 
 function TFloodFill.GetParamID;
 begin
-  Result := inherited GetParamID(ParamName, DataType, IsConst);
-  if Result = -1 then
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
   begin
 
     if StrEqu(ParamName, 'px') then
     begin
-      Result := NativeInt(@px);
+      result := NativeInt(@px);
       DataType := dtInteger;
     end
 
@@ -3511,7 +3466,7 @@ begin
 
       if StrEqu(ParamName, 'py') then
     begin
-      Result := NativeInt(@py);
+      result := NativeInt(@py);
       DataType := dtInteger;
     end
 
@@ -3519,21 +3474,21 @@ begin
 
       if StrEqu(ParamName, 'ch1') then
     begin
-      Result := NativeInt(@ch1);
+      result := NativeInt(@ch1);
       DataType := dtInteger;
     end
     else
 
       if StrEqu(ParamName, 'ch2') then
     begin
-      Result := NativeInt(@ch2);
+      result := NativeInt(@ch2);
       DataType := dtInteger;
     end
     else
 
       if StrEqu(ParamName, 'ch3') then
     begin
-      Result := NativeInt(@ch3);
+      result := NativeInt(@ch3);
       DataType := dtInteger;
     end
 
@@ -3542,7 +3497,7 @@ end;
 
 function TFloodFill.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     i_GetCount:
       begin
@@ -3550,10 +3505,10 @@ begin
       end;
     i_GetInit:
       begin
-        Result := 1;
+        result := 1;
       end;
   else
-    Result := inherited InfoFunc(Action, aParameter);
+    result := inherited InfoFunc(Action, aParameter);
   end
 end;
 
@@ -3561,11 +3516,11 @@ function TFloodFill.RunFunc;
 var
   res: integer;
 begin
-  Result := 0;
+  result := 0;
   case Action of
     f_InitState:
       begin
-        Result := 0;
+        result := 0;
       end;
 
     f_GoodStep:
@@ -3585,7 +3540,243 @@ begin
     f_Stop:
       begin
         releaseSimMat(@dst);
-        Result := 0;
+        result := 0;
+      end;
+
+  end
+end;
+
+/// /////////////////////////////////////////////////////////////////////////
+/// //                            TFindContous                         //////
+/// /////////////////////////////////////////////////////////////////////////
+
+function TFindContous.InfoFunc(Action: integer; aParameter: NativeInt)
+  : NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 1;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TFindContous.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+    f_InitState:
+      begin
+        result := 0;
+      end;
+
+    f_GoodStep:
+      begin
+        srcFrame := pPointer(@U[0].Arr^[0])^;
+        res := sim_findContours(srcFrame, @contours);
+        if res = 0 then
+        begin
+          pPointer(@Y[0].Arr^[0])^ := contours;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
+        end;
+      end;
+
+    f_Stop:
+      begin
+        result := 0;
+      end;
+
+  end
+end;
+
+/// /////////////////////////////////////////////////////////////////////////
+/// //                            TSelectContour                         //////
+/// /////////////////////////////////////////////////////////////////////////
+
+function TSelectContour.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+    if StrEqu(ParamName, 'index') then
+    begin
+      result := NativeInt(@index);
+      DataType := dtInteger;
+    end
+
+    else if StrEqu(ParamName, 'width') then
+    begin
+      result := NativeInt(@width);
+      DataType := dtInteger;
+    end
+
+    else if StrEqu(ParamName, 'isDraw') then
+    begin
+      result := NativeInt(@isDraw);
+      DataType := dtInteger;
+    end
+
+    else if StrEqu(ParamName, 'red') then
+    begin
+      result := NativeInt(@red);
+      DataType := dtInteger;
+    end
+
+    else if StrEqu(ParamName, 'green') then
+    begin
+      result := NativeInt(@green);
+      DataType := dtInteger;
+    end
+
+    else if StrEqu(ParamName, 'blue') then
+    begin
+      result := NativeInt(@blue);
+      DataType := dtInteger;
+    end
+
+  end
+end;
+
+function TSelectContour.InfoFunc(Action: integer; aParameter: NativeInt)
+  : NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 1;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TSelectContour.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+    f_InitState:
+      begin
+        result := 0;
+        pPointer(@Y[0].Arr^[0])^ := nil;
+        pPointer(@Y[0].Arr^[0])^ := nil;
+      end;
+
+    f_GoodStep:
+      begin
+        srcFrame := pPointer(@U[0].Arr^[0])^;
+        contours := pPointer(@U[1].Arr^[0])^;
+        //color[1] := blue;
+        //color := green;
+        //color[3] := red;
+        //res := sim_selectContour(srcFrame, contours, @frame, @contour);
+        if res = 0 then
+        begin
+          pPointer(@Y[0].Arr^[0])^ := srcFrame;
+          pPointer(@Y[1].Arr^[0])^ := contours;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
+          pPointer(@Y[1].Arr^[0])^ := nil;
+        end;
+      end;
+
+    f_Stop:
+      begin
+        result := 0;
+      end;
+
+  end
+end;
+/// /////////////////////////////////////////////////////////////////////////
+/// //                         TSelectContourArea                      //////
+/// /////////////////////////////////////////////////////////////////////////
+
+function TSelectContourArea.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+    if StrEqu(ParamName, 'minArea') then
+    begin
+      result := NativeInt(@minArea);
+      DataType := dtDouble;
+    end
+
+    else if StrEqu(ParamName, 'maxArea') then
+    begin
+      result := NativeInt(@maxArea);
+      DataType := dtDouble;
+    end
+  end
+end;
+
+function TSelectContourArea.InfoFunc(Action: integer; aParameter: NativeInt)
+  : NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 1;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TSelectContourArea.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+    f_InitState:
+      begin
+        result := 0;
+      end;
+
+    f_GoodStep:
+      begin
+        inputContours := pPointer(@U[0].Arr^[0])^;
+        res := sim_minMaxAreaContoursFilter(inputContours, @outputContours,
+          @minArea, @maxArea);
+        if res = 0 then
+        begin
+          pPointer(@Y[0].Arr^[0])^ := outputContours;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
+        end;
+      end;
+
+    f_Stop:
+      begin
+        result := 0;
       end;
 
   end
@@ -3646,9 +3837,12 @@ sim_sobel := GetProcAddress(hDll, 'sim_sobel');
 sim_scharr := GetProcAddress(hDll, 'sim_scharr');
 sim_laplacian := GetProcAddress(hDll, 'sim_laplacian');
 sim_resize := GetProcAddress(hDll, 'sim_resize');
-sim_resizeP := GetProcAddress(hDll, 'sim_resizeP');
 sim_warpPerspective := GetProcAddress(hDll, 'sim_warpPerspective');
 sim_floodFill := GetProcAddress(hDll, 'sim_floodFill');
+sim_findContours := GetProcAddress(hDll, 'sim_findContours');
+sim_selectContour := GetProcAddress(hDll, 'sim_selectContour');
+sim_minMaxAreaContoursFilter := GetProcAddress(hDll,
+  'sim_minMaxAreaContoursFilter');
 
 finalization
 
