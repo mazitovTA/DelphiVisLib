@@ -61,11 +61,12 @@ type
   //    в соответствии с этой таблицей создаются соответсвующие run-объекты   //
   //**************************************************************************//
 const
-  ClassTable:array[0..37] of TClassRecord =
+  ClassTable:array[0..41] of TClassRecord =
   (
     //Блоки для расчёта
     (Name:'TFRAMESOURCE';        RunClass:TFRAMESOURCE),
     (Name:'TIMREAD';             RunClass:TIMREAD),
+    (Name:'TIMSEQREAD';          RunClass:TIMSEQREAD),
     (Name:'TIMSHOW';             RunClass:TIMSHOW),
     (Name:'TCONVERTCOLOR';       RunClass:TCONVERTCOLOR),
     (Name:'TBITWISEAND';         RunClass:TBITWISEAND),
@@ -97,6 +98,9 @@ const
     (Name:'TSCHARR';             RunClass:TSCHARR),
     (Name:'TLAPLACIAN';          RunClass:TLAPLACIAN),
     (Name:'TRESIZE';             RunClass:TRESIZE),
+    (Name:'TCalibrateCamera';    RunClass:TCalibrateCamera),
+    (Name:'TUndistotImage';      RunClass:TUndistotImage),
+    (Name:'TLoadCalibrationParameters';    RunClass:TLoadCalibrationParameters),
     (Name:'TwarpPerspective';    RunClass:TwarpPerspective),
     (Name:'TFloodFill';          RunClass:TFloodFill),
     (Name:'TFindContous';        RunClass:TFindContous),

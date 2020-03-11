@@ -63,6 +63,21 @@ type
       var IsConst: boolean): NativeInt; override;
   end;
 
+  TIMSEQREAD = class(TRunObject)
+  public
+    fileList: tStringList;
+    frame: Pointer;
+    sourceMask: String;
+    sourcePath: String;
+    counter: integer;
+    code: integer;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
   TIMSHOW = class(TRunObject)
   public
     windowName: String;
@@ -478,6 +493,49 @@ type
       var IsConst: boolean): NativeInt; override;
   end;
 
+  TCalibrateCamera = class(TRunObject)
+  public
+    image: Pointer;
+    image_points: Pointer;
+    object_points: Pointer;
+    dstImage: Pointer;
+    intrinsic: Pointer;
+    distCoeffs: Pointer;
+    numCornersHor: integer;
+    numCornersVer: integer;
+    fileName: String;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
+  TLoadCalibrationParameters = class(TRunObject)
+  public
+    intrinsic: Pointer;
+    distCoeffs: Pointer;
+    fileName: String;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
+  TUndistotImage = class(TRunObject)
+  public
+    intrinsic: Pointer;
+    distCoeffs: Pointer;
+    src: Pointer;
+    dst: Pointer;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
   TwarpPerspective = class(TRunObject)
   public
     src: Pointer;
@@ -640,14 +698,62 @@ var
   sim_findContours: function(srcImage: Pointer; contours: pPointer)
     : integer; cdecl;
   sim_selectContour: function(srcImage: Pointer; contours: Pointer;
-   // index: integer; color: integer; width: integer; draw: integer;
+    // index: integer; color: integer; width: integer; draw: integer;
     dstItmage: pPointer; result: pPointer): integer; cdecl;
   sim_minMaxAreaContoursFilter: function(src: Pointer; dst: pPointer;
     min: Pointer; max: Pointer): integer; cdecl;
+  sim_fidnCalibrationPoints: function(image_points: pPointer;
+    object_points: pPointer; image: Pointer; dst: pPointer;
+    numCornersHor: integer; numCornersVer: integer): integer; cdecl;
+
+  sim_undistort: function(image: Pointer; imageUndistorted: pPointer;
+    intrinsic: Pointer; distCoeffs: Pointer): integer; cdecl;
+  sim_calibrateCamera: function(image_points: Pointer; object_points: Pointer;
+    image: Pointer; intrinsic: pPointer; distCoeffs: pPointer): integer; cdecl;
+  sim_saveCalibrationParameters: function(name: AnsiString; intrinsic: Pointer;
+    distCoeffs: Pointer): integer; cdecl;
+  sim_loadCalibrationParameters: function(name: AnsiString; intrinsic: pPointer;
+    distCoeffs: pPointer): integer; cdecl;
 
 implementation
 
-uses math;
+uses math, Masks;
+
+procedure SearchInDir(Mask, Dir: string; Subdir: boolean;
+  var List: tStringList);
+var
+  r: integer;
+  f: TSearchRec;
+begin
+  if Dir = '' then
+    Exit;
+  if Dir[Length(Dir)] <> '\' then
+    Dir := Dir + '\';
+{$I-}
+  ChDir(Dir);
+{$I+}
+  if IOResult <> 0 then
+    Exit;
+  r := FindFirst('*.*', faAnyFile, f);
+  while r = 0 do
+  begin
+    IF ((f.Attr and faDirectory) <> faDirectory) THEN
+      if (MatchesMask(f.Name, Mask)) or (Mask = '*.*') then
+        if (f.Name <> '.') and (f.Name <> '..') then
+          List.Add(ExpandFileName(f.Name));
+    if (f.Attr and faDirectory) = faDirectory then
+      if Subdir = True then
+      begin
+        if (f.Name <> '.') and (f.Name <> '..') then
+        begin
+          SearchInDir(Mask, ExpandFileName(f.Name), Subdir, List);
+          ChDir(Dir);
+        end;
+      end;
+    r := FindNext(f);
+  end;
+  FindClose(f);
+end;
 
 /// /////////////////////////////////////////////////////////////////////////
 /// //                                   TFRAMESOURCE                  //////
@@ -741,8 +847,7 @@ begin
       result := NativeInt(@sourceName);
       DataType := dtString;
     end
-    else
-    if StrEqu(ParamName, 'code') then
+    else if StrEqu(ParamName, 'code') then
     begin
       result := NativeInt(@code);
       DataType := dtInteger;
@@ -773,7 +878,6 @@ var
 begin
   result := 0;
   case Action of
-
     f_InitState:
       begin
         result := 0;
@@ -800,7 +904,93 @@ begin
 
   end
 end;
+/// /////////////////////////////////////////////////////////////////////////
+/// //                                        TIMSEQREAD                  //////
+/// /////////////////////////////////////////////////////////////////////////
 
+function TIMSEQREAD.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+    if StrEqu(ParamName, 'path') then
+    begin
+      result := NativeInt(@sourcePath);
+      DataType := dtString;
+    end
+    else if StrEqu(ParamName, 'mask') then
+    begin
+      result := NativeInt(@sourceMask);
+      DataType := dtString;
+    end
+    else if StrEqu(ParamName, 'code') then
+    begin
+      result := NativeInt(@code);
+      DataType := dtInteger;
+    end
+  end
+end;
+
+function TIMSEQREAD.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 1;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TIMSEQREAD.RunFunc;
+var
+  res, tmp: integer;
+begin
+  result := 0;
+  case Action of
+
+    f_InitState:
+      begin
+        fileList := tStringList.Create;
+        SearchInDir(sourceMask, sourcePath, True, fileList);
+        for tmp := 0 to fileList.Count - 1 do
+          ErrorEvent(fileList[tmp], msInfo, VisualObject);
+        result := 0;
+        counter := 0;
+        res := 0;
+      end;
+
+    f_GoodStep:
+      begin
+        if (counter < fileList.Count) and (fileList.Count > 0) then
+        begin
+          res := openImage(@frame, fileList[counter], code);
+          counter := counter + 1;
+          // ErrorEvent(IntToStr(counter), msError, VisualObject);
+          if res = 0 then
+          begin
+            pPointer(@Y[0].Arr^[0])^ := frame;
+          end
+          else
+          begin
+            pPointer(@Y[0].Arr^[0])^ := nil;
+          end;
+        end;
+      end;
+
+    f_Stop:
+      begin
+        releaseSimMat(@frame);
+      end;
+
+  end
+end;
 /// /////////////////////////////////////////////////////////////////////////
 /// //                                        TIMSHOW                  //////
 /// /////////////////////////////////////////////////////////////////////////
@@ -3238,6 +3428,236 @@ begin
 end;
 
 /// /////////////////////////////////////////////////////////////////////////
+/// //                               TCalibrateCamera                  //////
+/// /////////////////////////////////////////////////////////////////////////
+function TCalibrateCamera.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+
+    if StrEqu(ParamName, 'numCornersHor') then
+    begin
+      result := NativeInt(@numCornersHor);
+      DataType := dtInteger;
+    end
+    else if StrEqu(ParamName, 'numCornersVer') then
+    begin
+      result := NativeInt(@numCornersVer);
+      DataType := dtInteger;
+    end
+    else if StrEqu(ParamName, 'fileName') then
+    begin
+      result := NativeInt(@fileName);
+      DataType := dtString;
+    end
+  end
+end;
+
+function TCalibrateCamera.InfoFunc(Action: integer; aParameter: NativeInt)
+  : NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 1;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TCalibrateCamera.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+
+    f_InitState:
+      begin
+        result := 0;
+      end;
+
+    f_GoodStep:
+      begin
+        image := pPointer(@U[0].Arr^[0])^;
+        // ErrorEvent(IntToStr(numCornersHor), msError, VisualObject);
+        // ErrorEvent(IntToStr(numCornersVer), msError, VisualObject);
+        res := sim_fidnCalibrationPoints(@image_points, @object_points, image,
+          @dstImage, numCornersHor, numCornersVer);
+        if res = 0 then
+        begin
+          pPointer(@Y[0].Arr^[0])^ := dstImage;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
+        end;
+      end;
+
+    f_Stop:
+      begin
+        res := sim_calibrateCamera(image_points, object_points, image,
+          @intrinsic, @distCoeffs);
+        if res = 0 then
+        begin
+          ErrorEvent('camera calibrated!!!', msInfo, VisualObject);
+          sim_saveCalibrationParameters(fileName, intrinsic, distCoeffs);
+          if res = 0 then
+          begin
+            ErrorEvent('calibration data saved to file: ' + fileName, msInfo, VisualObject);
+          end;
+        end;
+        releaseSimMat(@dstImage);
+        result := 0;
+      end;
+
+  end
+end;
+
+/// /////////////////////////////////////////////////////////////////////////
+/// //                                 TUndistotImage                  //////
+/// /////////////////////////////////////////////////////////////////////////
+function TUndistotImage.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+  end
+end;
+
+function TUndistotImage.InfoFunc(Action: integer; aParameter: NativeInt)
+  : NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 1;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TUndistotImage.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+
+    f_InitState:
+      begin
+        result := 0;
+      end;
+
+    f_GoodStep:
+      begin
+        src := pPointer(@U[0].Arr^[0])^;
+        intrinsic := pPointer(@U[1].Arr^[0])^;
+        distCoeffs := pPointer(@U[2].Arr^[0])^;
+        res := sim_undistort(src, @dst, intrinsic, distCoeffs);
+        if res = 0 then
+        begin
+          pPointer(@Y[0].Arr^[0])^ := dst;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
+        end;
+      end;
+
+    f_Stop:
+      begin
+        releaseSimMat(@dst);
+        result := 0;
+      end;
+
+  end
+end;
+
+/// /////////////////////////////////////////////////////////////////////////
+/// //                      TLoadCalibrationParameters                  //////
+/// /////////////////////////////////////////////////////////////////////////
+function TLoadCalibrationParameters.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+    if StrEqu(ParamName, 'fileName') then
+    begin
+      result := NativeInt(@fileName);
+      DataType := dtString;
+    end
+  end
+end;
+
+function TLoadCalibrationParameters.InfoFunc(Action: integer;
+  aParameter: NativeInt): NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 1;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TLoadCalibrationParameters.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+
+    f_InitState:
+      begin
+        res := sim_loadCalibrationParameters(fileName, @intrinsic, @distCoeffs);
+        if res = 0 then
+        begin
+          ErrorEvent('calibration data loaded from file: ' + fileName, msInfo, VisualObject);
+          pPointer(@Y[0].Arr^[0])^ := intrinsic;
+          pPointer(@Y[1].Arr^[0])^ := distCoeffs;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
+          pPointer(@Y[1].Arr^[0])^ := nil;
+        end;
+        result := 0;
+      end;
+
+    f_GoodStep:
+      begin
+        result := 0;
+      end;
+
+    f_Stop:
+      begin
+        result := 0;
+      end;
+
+  end
+end;
+/// /////////////////////////////////////////////////////////////////////////
 /// //                               TwarpPerspective                  //////
 /// /////////////////////////////////////////////////////////////////////////
 
@@ -3684,10 +4104,10 @@ begin
       begin
         srcFrame := pPointer(@U[0].Arr^[0])^;
         contours := pPointer(@U[1].Arr^[0])^;
-        //color[1] := blue;
-        //color := green;
-        //color[3] := red;
-        //res := sim_selectContour(srcFrame, contours, @frame, @contour);
+        // color[1] := blue;
+        // color := green;
+        // color[3] := red;
+        // res := sim_selectContour(srcFrame, contours, @frame, @contour);
         if res = 0 then
         begin
           pPointer(@Y[0].Arr^[0])^ := srcFrame;
@@ -3843,6 +4263,13 @@ sim_findContours := GetProcAddress(hDll, 'sim_findContours');
 sim_selectContour := GetProcAddress(hDll, 'sim_selectContour');
 sim_minMaxAreaContoursFilter := GetProcAddress(hDll,
   'sim_minMaxAreaContoursFilter');
+sim_fidnCalibrationPoints := GetProcAddress(hDll, 'sim_fidnCalibrationPoints');
+sim_undistort := GetProcAddress(hDll, 'sim_undistort');
+sim_calibrateCamera := GetProcAddress(hDll, 'sim_calibrateCamera');
+sim_saveCalibrationParameters := GetProcAddress(hDll,
+  'sim_saveCalibrationParameters');
+sim_loadCalibrationParameters := GetProcAddress(hDll,
+  'sim_loadCalibrationParameters');
 
 finalization
 
