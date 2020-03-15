@@ -25,12 +25,8 @@ type
     COLOR_GRAY2RGB, // 8,
     COLOR_BGR2HSV, // 40,
     COLOR_RGB2HSV, // 41,
-    COLOR_BGR2HLS, // 52,
-    COLOR_RGB2HLS, // 53,
     COLOR_HSV2BGR, // 54,
-    COLOR_HSV2RGB, // 55,
-    COLOR_HLS2BGR, // 60,
-    COLOR_HLS2RGB // 61,
+    COLOR_HSV2RGB // 55
     );
   TStructureElement = (MORPH_RECT, MORPH_CROSS, MORPH_ELLIPSE);
   TInterpolation = (INTER_NEAREST, INTER_LINEAR, INTER_CUBIC, INTER_AREA);
@@ -610,6 +606,22 @@ type
       var IsConst: boolean): NativeInt; override;
   end;
 
+  TDetectLanes = class(TRunObject)
+  public
+    binaryinput: Pointer;
+    drawinput: Pointer;
+    rd: integer;
+    ld: integer;
+    numHorHist: integer;
+    wheel: integer;
+    roi: integer;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
   // **************************************************************************//
   // Определяем ссылки для каждой функции библиотеки          //
   // **************************************************************************//
@@ -714,6 +726,10 @@ var
     distCoeffs: Pointer): integer; cdecl;
   sim_loadCalibrationParameters: function(name: AnsiString; intrinsic: pPointer;
     distCoeffs: pPointer): integer; cdecl;
+
+  sim_detectLanes: function(binaryinput: Pointer; numHorHist: integer;
+    roi_w: integer; wheel_h: integer; rd: Pointer; ld: Pointer;
+    drawinput: Pointer): integer; cdecl;
 
 implementation
 
@@ -1134,18 +1150,10 @@ begin
             res := sim_convertColor(src, @dst, 40);
           integer(COLOR_RGB2HSV):
             res := sim_convertColor(src, @dst, 41);
-          integer(COLOR_BGR2HLS):
-            res := sim_convertColor(src, @dst, 52);
-          integer(COLOR_RGB2HLS):
-            res := sim_convertColor(src, @dst, 53);
           integer(COLOR_HSV2BGR):
             res := sim_convertColor(src, @dst, 54);
           integer(COLOR_HSV2RGB):
             res := sim_convertColor(src, @dst, 55);
-          integer(COLOR_HLS2BGR):
-            res := sim_convertColor(src, @dst, 60);
-          integer(COLOR_HLS2RGB):
-            res := sim_convertColor(src, @dst, 61);
         End;
         if res = 0 then
         begin
@@ -3511,7 +3519,8 @@ begin
           sim_saveCalibrationParameters(fileName, intrinsic, distCoeffs);
           if res = 0 then
           begin
-            ErrorEvent('calibration data saved to file: ' + fileName, msInfo, VisualObject);
+            ErrorEvent('calibration data saved to file: ' + fileName, msInfo,
+              VisualObject);
           end;
         end;
         releaseSimMat(@dstImage);
@@ -3633,7 +3642,8 @@ begin
         res := sim_loadCalibrationParameters(fileName, @intrinsic, @distCoeffs);
         if res = 0 then
         begin
-          ErrorEvent('calibration data loaded from file: ' + fileName, msInfo, VisualObject);
+          ErrorEvent('calibration data loaded from file: ' + fileName, msInfo,
+            VisualObject);
           pPointer(@Y[0].Arr^[0])^ := intrinsic;
           pPointer(@Y[1].Arr^[0])^ := distCoeffs;
         end
@@ -4201,6 +4211,94 @@ begin
 
   end
 end;
+
+/// /////////////////////////////////////////////////////////////////////////
+/// //                         TDetectLanes                      //////
+/// /////////////////////////////////////////////////////////////////////////
+function TDetectLanes.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+    if StrEqu(ParamName, 'numHorHist') then
+    begin
+      result := NativeInt(@numHorHist);
+      DataType := dtInteger;
+    end
+
+    else if StrEqu(ParamName, 'wheel') then
+    begin
+      result := NativeInt(@wheel);
+      DataType := dtInteger;
+    end
+
+    else if StrEqu(ParamName, 'roi') then
+    begin
+      result := NativeInt(@roi);
+      DataType := dtInteger;
+    end
+
+  end
+end;
+
+function TDetectLanes.InfoFunc(Action: integer; aParameter: NativeInt)
+  : NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 1;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TDetectLanes.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+    f_InitState:
+      begin
+        result := 0;
+      end;
+
+    f_GoodStep:
+      begin
+        binaryinput := pPointer(@U[0].Arr^[0])^;
+        drawinput := pPointer(@U[1].Arr^[0])^;
+        res := sim_detectLanes(binaryinput, numHorHist, roi, wheel, @rd, @ld,
+          drawinput);
+        ErrorEvent(IntToStr(rd) + ' <> ' + IntToStr(ld), msInfo, VisualObject);
+        if res = 0 then
+        begin
+          pPointer(@Y[0].Arr^[0])^ := drawinput;
+          pPointer(@Y[1].Arr^[0])^ := @rd;
+          pPointer(@Y[2].Arr^[0])^ := @ld;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
+          pPointer(@Y[1].Arr^[0])^ := nil;
+          pPointer(@Y[2].Arr^[0])^ := nil;
+        end;
+      end;
+
+    f_Stop:
+      begin
+        result := 0;
+      end;
+
+  end
+end;
+
 // ***********************************************************************//
 // Раздел инициализации                               //
 // ***********************************************************************//
@@ -4270,6 +4368,7 @@ sim_saveCalibrationParameters := GetProcAddress(hDll,
   'sim_saveCalibrationParameters');
 sim_loadCalibrationParameters := GetProcAddress(hDll,
   'sim_loadCalibrationParameters');
+sim_detectLanes := GetProcAddress(hDll, 'sim_detectLanes');
 
 finalization
 
