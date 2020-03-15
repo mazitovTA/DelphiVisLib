@@ -25,8 +25,12 @@ type
     COLOR_GRAY2RGB, // 8,
     COLOR_BGR2HSV, // 40,
     COLOR_RGB2HSV, // 41,
+    COLOR_BGR2HLS, // 52,
+    COLOR_RGB2HLS, // 53,
     COLOR_HSV2BGR, // 54,
-    COLOR_HSV2RGB // 55
+    COLOR_HSV2RGB, // 55
+    COLOR_HLS2BGR, // 60,
+    COLOR_HLS2RGB // 61,
     );
   TStructureElement = (MORPH_RECT, MORPH_CROSS, MORPH_ELLIPSE);
   TInterpolation = (INTER_NEAREST, INTER_LINEAR, INTER_CUBIC, INTER_AREA);
@@ -1150,9 +1154,17 @@ begin
             res := sim_convertColor(src, @dst, 40);
           integer(COLOR_RGB2HSV):
             res := sim_convertColor(src, @dst, 41);
+          integer(COLOR_BGR2HLS):
+            res := sim_convertColor(src, @dst, 52);
+          integer(COLOR_RGB2HLS):
+            res := sim_convertColor(src, @dst, 53);
           integer(COLOR_HSV2BGR):
             res := sim_convertColor(src, @dst, 54);
           integer(COLOR_HSV2RGB):
+            res := sim_convertColor(src, @dst, 55);
+          integer(COLOR_HLS2BGR):
+            res := sim_convertColor(src, @dst, 54);
+          integer(COLOR_HLS2RGB):
             res := sim_convertColor(src, @dst, 55);
         End;
         if res = 0 then
@@ -4276,7 +4288,6 @@ begin
         drawinput := pPointer(@U[1].Arr^[0])^;
         res := sim_detectLanes(binaryinput, numHorHist, roi, wheel, @rd, @ld,
           drawinput);
-        ErrorEvent(IntToStr(rd) + ' <> ' + IntToStr(ld), msInfo, VisualObject);
         if res = 0 then
         begin
           pPointer(@Y[0].Arr^[0])^ := drawinput;
@@ -4288,7 +4299,10 @@ begin
           pPointer(@Y[0].Arr^[0])^ := nil;
           pPointer(@Y[1].Arr^[0])^ := nil;
           pPointer(@Y[2].Arr^[0])^ := nil;
+          rd := -1;
+          ld := -1;
         end;
+        ErrorEvent(IntToStr(rd) + ' <> ' + IntToStr(ld), msInfo, VisualObject);
       end;
 
     f_Stop:
