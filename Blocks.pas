@@ -25,12 +25,12 @@ type
     COLOR_GRAY2RGB, // 8,
     COLOR_BGR2HSV, // 40,
     COLOR_RGB2HSV, // 41,
-    COLOR_BGR2HLS, // 52,
-    COLOR_RGB2HLS, // 53,
+    // COLOR_BGR2HLS, // 52,
+    // COLOR_RGB2HLS, // 53,
     COLOR_HSV2BGR, // 54,
-    COLOR_HSV2RGB, // 55
-    COLOR_HLS2BGR, // 60,
-    COLOR_HLS2RGB // 61,
+    COLOR_HSV2RGB // 55
+    // COLOR_HLS2BGR, // 60,
+    // COLOR_HLS2RGB // 61,
     );
   TStructureElement = (MORPH_RECT, MORPH_CROSS, MORPH_ELLIPSE);
   TInterpolation = (INTER_NEAREST, INTER_LINEAR, INTER_CUBIC, INTER_AREA);
@@ -55,7 +55,7 @@ type
   public
     frame: Pointer;
     sourceName: String;
-    code: integer;
+    code: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -69,8 +69,8 @@ type
     frame: Pointer;
     sourceMask: String;
     sourcePath: String;
-    counter: integer;
-    code: integer;
+    counter: NativeInt;
+    code: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -81,9 +81,8 @@ type
   TIMSHOW = class(TRunObject)
   public
     windowName: String;
-    delay: integer;
+    delay: NativeInt;
     frame: Pointer;
-
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
     function GetParamID(const ParamName: string; var DataType: TDataType;
       var IsConst: boolean): NativeInt; override;
@@ -93,7 +92,7 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    code: integer;
+    code: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -241,7 +240,7 @@ type
     dst: Pointer;
     Thresh: Double;
     Maxval: Double;
-    codetype: integer;
+    codetype: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -254,9 +253,9 @@ type
     src: Pointer;
     dst: Pointer;
     maxValue: RealType;
-    adaptiveMethod: integer;
-    ThresholdType: integer;
-    blocksize: integer;
+    adaptiveMethod: NativeInt;
+    ThresholdType: NativeInt;
+    blocksize: NativeInt;
     C: RealType;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
@@ -269,7 +268,7 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    d: integer;
+    d: NativeInt;
     SigmaColor: RealType;
     SigmaSpace: RealType;
     function InfoFunc(Action: integer; aParameter: NativeInt)
@@ -283,8 +282,8 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    ksizeX: integer;
-    ksizeY: integer;
+    ksizeX: NativeInt;
+    ksizeY: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -296,8 +295,8 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    ksizeX: integer;
-    ksizeY: integer;
+    ksizeX: NativeInt;
+    ksizeY: NativeInt;
     sigmaX: RealType;
     sigmaY: RealType;
     function InfoFunc(Action: integer; aParameter: NativeInt)
@@ -311,10 +310,10 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    ksizeX: integer;
-    ksizeY: integer;
-    anchorX: integer;
-    anchorY: integer;
+    ksizeX: NativeInt;
+    ksizeY: NativeInt;
+    anchorX: NativeInt;
+    anchorY: NativeInt;
     normalize: boolean;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
@@ -329,7 +328,7 @@ type
     dst: Pointer;
     Threshold1: RealType;
     Threshold2: RealType;
-    apertureSize: integer;
+    apertureSize: NativeInt;
     L2gradient: boolean;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
@@ -342,8 +341,8 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    blocksize: integer;
-    ksize: integer;
+    blocksize: NativeInt;
+    ksize: NativeInt;
     k: RealType;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
@@ -356,8 +355,8 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    ksize: integer;
-    kshape: integer;
+    ksize: NativeInt;
+    kshape: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -369,8 +368,8 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    ksize: integer;
-    kshape: integer;
+    ksize: NativeInt;
+    kshape: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -382,10 +381,10 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    roix: integer;
-    roiy: integer;
-    roiw: integer;
-    roih: integer;
+    roix: NativeInt;
+    roiy: NativeInt;
+    roiw: NativeInt;
+    roih: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -436,9 +435,9 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    dx: integer;
-    dy: integer;
-    ksize: integer;
+    dx: NativeInt;
+    dy: NativeInt;
+    ksize: NativeInt;
     scale: RealType;
     delta: RealType;
     function InfoFunc(Action: integer; aParameter: NativeInt)
@@ -452,8 +451,8 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    dx: integer;
-    dy: integer;
+    dx: NativeInt;
+    dy: NativeInt;
     scale: RealType;
     delta: RealType;
     function InfoFunc(Action: integer; aParameter: NativeInt)
@@ -467,7 +466,7 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    ksize: integer;
+    ksize: NativeInt;
     scale: RealType;
     delta: RealType;
     function InfoFunc(Action: integer; aParameter: NativeInt)
@@ -481,8 +480,8 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    ksizeX: integer;
-    ksizeY: integer;
+    ksizeX: NativeInt;
+    ksizeY: NativeInt;
     fx: RealType;
     fy: RealType;
     interpolation: integer;
@@ -501,8 +500,8 @@ type
     dstImage: Pointer;
     intrinsic: Pointer;
     distCoeffs: Pointer;
-    numCornersHor: integer;
-    numCornersVer: integer;
+    numCornersHor: NativeInt;
+    numCornersVer: NativeInt;
     fileName: String;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
@@ -542,8 +541,8 @@ type
     dst: Pointer;
     srcPts: Array [1 .. 8] of RealType;
     dstPts: Array [1 .. 8] of RealType;
-    dsizeX: integer;
-    dsizeY: integer;
+    dsizeX: NativeInt;
+    dsizeY: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -555,11 +554,11 @@ type
   public
     src: Pointer;
     dst: Pointer;
-    px: integer;
-    py: integer;
-    ch1: integer;
-    ch2: integer;
-    ch3: integer;
+    px: NativeInt;
+    py: NativeInt;
+    ch1: NativeInt;
+    ch2: NativeInt;
+    ch3: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -579,17 +578,14 @@ type
   TSelectContour = class(TRunObject)
   public
     srcFrame: Pointer;
+    dstFrame: Pointer;
     contours: Pointer;
     contour: Pointer;
-    frame: Pointer;
-    index: integer;
-    color: integer;
-    width: integer;
-    red: integer;
-    green: integer;
-    blue: integer;
-    isDraw: integer;
-
+    index: NativeInt;
+    width: NativeInt;
+    red: NativeInt;
+    green: NativeInt;
+    blue: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -610,15 +606,34 @@ type
       var IsConst: boolean): NativeInt; override;
   end;
 
+  TFindSign = class(TRunObject)
+  public
+    templFrame: Pointer;
+    templContour: Pointer;
+    frame: Pointer;
+    contours: Pointer;
+    normalizedContourSizeX: NativeInt;
+    normalizedContourSizeY: NativeInt;
+    useHull: boolean;
+    draw: boolean;
+    minCorrelation: RealType;
+    numFound: NativeInt;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
   TDetectLanes = class(TRunObject)
   public
     binaryinput: Pointer;
     drawinput: Pointer;
-    rd: integer;
-    ld: integer;
-    numHorHist: integer;
-    wheel: integer;
-    roi: integer;
+    rd: NativeInt;
+    ld: NativeInt;
+    numHorHist: NativeInt;
+    wheel: NativeInt;
+    roi: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -713,8 +728,9 @@ var
 
   sim_findContours: function(srcImage: Pointer; contours: pPointer)
     : integer; cdecl;
+
   sim_selectContour: function(srcImage: Pointer; contours: Pointer;
-    // index: integer; color: integer; width: integer; draw: integer;
+    index: integer; red: integer; green: integer; blue: integer; width: integer;
     dstItmage: pPointer; result: pPointer): integer; cdecl;
   sim_minMaxAreaContoursFilter: function(src: Pointer; dst: pPointer;
     min: Pointer; max: Pointer): integer; cdecl;
@@ -730,6 +746,11 @@ var
     distCoeffs: Pointer): integer; cdecl;
   sim_loadCalibrationParameters: function(name: AnsiString; intrinsic: pPointer;
     distCoeffs: pPointer): integer; cdecl;
+
+  sim_findSign: function(templFrame: Pointer; templContour: Pointer;
+    frame: Pointer; contours: Pointer; normalizedContourSizeX: integer;
+    normalizedContourSizeY: integer; useHull: boolean; draw: boolean;
+    minCorrelation: RealType; numFound: Pointer): integer; cdecl;
 
   sim_detectLanes: function(binaryinput: Pointer; numHorHist: integer;
     roi_w: integer; wheel_h: integer; rd: Pointer; ld: Pointer;
@@ -1154,18 +1175,22 @@ begin
             res := sim_convertColor(src, @dst, 40);
           integer(COLOR_RGB2HSV):
             res := sim_convertColor(src, @dst, 41);
-          integer(COLOR_BGR2HLS):
+          {
+            integer(COLOR_BGR2HLS):
             res := sim_convertColor(src, @dst, 52);
-          integer(COLOR_RGB2HLS):
+            integer(COLOR_RGB2HLS):
             res := sim_convertColor(src, @dst, 53);
+          }
           integer(COLOR_HSV2BGR):
             res := sim_convertColor(src, @dst, 54);
           integer(COLOR_HSV2RGB):
             res := sim_convertColor(src, @dst, 55);
-          integer(COLOR_HLS2BGR):
+          {
+            integer(COLOR_HLS2BGR):
             res := sim_convertColor(src, @dst, 54);
-          integer(COLOR_HLS2RGB):
+            integer(COLOR_HLS2RGB):
             res := sim_convertColor(src, @dst, 55);
+          }
         End;
         if res = 0 then
         begin
@@ -4064,12 +4089,6 @@ begin
       DataType := dtInteger;
     end
 
-    else if StrEqu(ParamName, 'isDraw') then
-    begin
-      result := NativeInt(@isDraw);
-      DataType := dtInteger;
-    end
-
     else if StrEqu(ParamName, 'red') then
     begin
       result := NativeInt(@red);
@@ -4118,28 +4137,28 @@ begin
     f_InitState:
       begin
         result := 0;
-        pPointer(@Y[0].Arr^[0])^ := nil;
-        pPointer(@Y[0].Arr^[0])^ := nil;
       end;
 
     f_GoodStep:
       begin
         srcFrame := pPointer(@U[0].Arr^[0])^;
         contours := pPointer(@U[1].Arr^[0])^;
-        // color[1] := blue;
-        // color := green;
-        // color[3] := red;
-        // res := sim_selectContour(srcFrame, contours, @frame, @contour);
+
+        res := sim_selectContour(srcFrame, contours, index, red, green, blue,
+          width, @dstFrame, @contour);
         if res = 0 then
         begin
-          pPointer(@Y[0].Arr^[0])^ := srcFrame;
-          pPointer(@Y[1].Arr^[0])^ := contours;
+          pPointer(@Y[0].Arr^[0])^ := dstFrame;
+          pPointer(@Y[1].Arr^[0])^ := contour;
         end
         else
         begin
           pPointer(@Y[0].Arr^[0])^ := nil;
           pPointer(@Y[1].Arr^[0])^ := nil;
         end;
+
+        // pPointer(@Y[0].Arr^[0])^ := srcFrame;
+        // pPointer(@Y[1].Arr^[0])^ := contours;
       end;
 
     f_Stop:
@@ -4225,6 +4244,105 @@ begin
 end;
 
 /// /////////////////////////////////////////////////////////////////////////
+/// //                         TFindSign                      //////
+/// /////////////////////////////////////////////////////////////////////////
+function TFindSign.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+    if StrEqu(ParamName, 'normalizedContourSizeX') then
+    begin
+      result := NativeInt(@normalizedContourSizeX);
+      DataType := dtInteger;
+    end
+
+    else if StrEqu(ParamName, 'normalizedContourSizeY') then
+    begin
+      result := NativeInt(@normalizedContourSizeY);
+      DataType := dtInteger;
+    end
+
+    else if StrEqu(ParamName, 'useHull') then
+    begin
+      result := NativeInt(@useHull);
+      DataType := dtBool;
+    end
+
+    else if StrEqu(ParamName, 'draw') then
+    begin
+      result := NativeInt(@draw);
+      DataType := dtBool;
+    end
+    else if StrEqu(ParamName, 'minCorrelation') then
+    begin
+      result := NativeInt(@minCorrelation);
+      DataType := dtDouble;
+    end
+
+  end
+end;
+
+function TFindSign.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 1;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TFindSign.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+    f_InitState:
+      begin
+        result := 0;
+      end;
+
+    f_GoodStep:
+      begin
+
+        templFrame := pPointer(@U[0].Arr^[0])^;
+        templContour := pPointer(@U[1].Arr^[0])^;
+        frame := pPointer(@U[3].Arr^[0])^;
+        contours := pPointer(@U[4].Arr^[0])^;
+
+        res := sim_findSign(templFrame, templContour, frame, contours,
+          normalizedContourSizeX, normalizedContourSizeY, useHull, draw,
+          minCorrelation, @numFound);
+        if res = 0 then
+        begin
+          Y[0].Arr^[0] := numFound;
+          //pPointer(@Y[0].Arr^[0])^ := @numFound;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
+        end;
+        ErrorEvent(IntToStr(numFound), msInfo, VisualObject);
+      end;
+
+    f_Stop:
+      begin
+        result := 0;
+      end;
+
+  end
+end;
+
+/// /////////////////////////////////////////////////////////////////////////
 /// //                         TDetectLanes                      //////
 /// /////////////////////////////////////////////////////////////////////////
 function TDetectLanes.GetParamID;
@@ -4291,8 +4409,8 @@ begin
         if res = 0 then
         begin
           pPointer(@Y[0].Arr^[0])^ := drawinput;
-          pPointer(@Y[1].Arr^[0])^ := @rd;
-          pPointer(@Y[2].Arr^[0])^ := @ld;
+          Y[1].Arr^[0] := rd;
+          Y[2].Arr^[0] := ld;
         end
         else
         begin
@@ -4382,6 +4500,7 @@ sim_saveCalibrationParameters := GetProcAddress(hDll,
   'sim_saveCalibrationParameters');
 sim_loadCalibrationParameters := GetProcAddress(hDll,
   'sim_loadCalibrationParameters');
+sim_findSign := GetProcAddress(hDll, 'sim_findSign');
 sim_detectLanes := GetProcAddress(hDll, 'sim_detectLanes');
 
 finalization
