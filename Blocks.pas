@@ -392,6 +392,30 @@ type
       var IsConst: boolean): NativeInt; override;
   end;
 
+  TFLIP = class(TRunObject)
+  public
+    src: Pointer;
+    dst: Pointer;
+    code: NativeInt;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
+  TROTATE = class(TRunObject)
+  public
+    src: Pointer;
+    dst: Pointer;
+    code: NativeInt;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
   TSPLIT = class(TRunObject)
   public
     src: Pointer;
@@ -614,8 +638,8 @@ type
     contours: Pointer;
     normalizedContourSizeX: NativeInt;
     normalizedContourSizeY: NativeInt;
-    useHull: boolean;
-    draw: boolean;
+    useHull: NativeInt;
+    draw: NativeInt;
     minCorrelation: RealType;
     numFound: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
@@ -707,6 +731,10 @@ var
     kshape: integer): integer; cdecl;
   sim_roi: function(src: Pointer; dst: pPointer; roix: integer; roiy: integer;
     roiw: integer; roih: integer): integer; cdecl;
+  sim_flip: function(src: Pointer; dst: pPointer; code: integer)
+    : integer; cdecl;
+  sim_rotate: function(src: Pointer; dst: pPointer; code: integer)
+    : integer; cdecl;
   sim_split: function(src: Pointer; dst1: pPointer; dst2: pPointer;
     dst3: pPointer): integer; cdecl;
   sim_inRange: function(src: Pointer; dst: pPointer; lower: RealType;
@@ -749,7 +777,7 @@ var
 
   sim_findSign: function(templFrame: Pointer; templContour: Pointer;
     frame: Pointer; contours: Pointer; normalizedContourSizeX: integer;
-    normalizedContourSizeY: integer; useHull: boolean; draw: boolean;
+    normalizedContourSizeY: integer; useHull: NativeInt; draw: NativeInt;
     minCorrelation: RealType; numFound: Pointer): integer; cdecl;
 
   sim_detectLanes: function(binaryinput: Pointer; numHorHist: integer;
@@ -2900,6 +2928,146 @@ begin
 end;
 
 /// /////////////////////////////////////////////////////////////////////////
+/// //                                           TROI                  //////
+/// /////////////////////////////////////////////////////////////////////////
+
+function TFLIP.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+
+    if StrEqu(ParamName, 'code') then
+    begin
+      result := NativeInt(@code);
+      DataType := dtInteger;
+    end
+  end
+end;
+
+function TFLIP.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 1;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TFLIP.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+
+    f_InitState:
+      begin
+        result := 0;
+      end;
+
+    f_GoodStep:
+      begin
+        src := pPointer(@U[0].Arr^[0])^;
+        res := sim_flip(src, @dst, code);
+        if res = 0 then
+        begin
+          pPointer(@Y[0].Arr^[0])^ := dst;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
+        end;
+      end;
+
+    f_Stop:
+      begin
+        releaseSimMat(@dst);
+        result := 0;
+      end;
+
+  end
+end;
+
+/// /////////////////////////////////////////////////////////////////////////
+/// //                                       TROTATE                   //////
+/// /////////////////////////////////////////////////////////////////////////
+
+function TROTATE.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+
+    if StrEqu(ParamName, 'code') then
+    begin
+      result := NativeInt(@code);
+      DataType := dtInteger;
+    end
+  end
+end;
+
+function TROTATE.InfoFunc(Action: integer; aParameter: NativeInt): NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 1;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TROTATE.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+
+    f_InitState:
+      begin
+        result := 0;
+      end;
+
+    f_GoodStep:
+      begin
+        src := pPointer(@U[0].Arr^[0])^;
+        res := sim_rotate(src, @dst, code);
+        if res = 0 then
+        begin
+          pPointer(@Y[0].Arr^[0])^ := dst;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
+        end;
+      end;
+
+    f_Stop:
+      begin
+        releaseSimMat(@dst);
+        result := 0;
+      end;
+
+  end
+end;
+
+/// /////////////////////////////////////////////////////////////////////////
 /// //                                         TSPLIT                  //////
 /// /////////////////////////////////////////////////////////////////////////
 
@@ -4316,21 +4484,26 @@ begin
 
         templFrame := pPointer(@U[0].Arr^[0])^;
         templContour := pPointer(@U[1].Arr^[0])^;
-        frame := pPointer(@U[3].Arr^[0])^;
-        contours := pPointer(@U[4].Arr^[0])^;
+        frame := pPointer(@U[2].Arr^[0])^;
+        contours := pPointer(@U[3].Arr^[0])^;
 
         res := sim_findSign(templFrame, templContour, frame, contours,
           normalizedContourSizeX, normalizedContourSizeY, useHull, draw,
           minCorrelation, @numFound);
+
         if res = 0 then
         begin
+          //pPointer(@Y[0].Arr^[0])^ := frame;
+          //pPointer(@Y[1].Arr^[0])^ := templContour;
           Y[0].Arr^[0] := numFound;
-          //pPointer(@Y[0].Arr^[0])^ := @numFound;
+          pPointer(@Y[1].Arr^[0])^ := frame;
         end
         else
         begin
-          pPointer(@Y[0].Arr^[0])^ := nil;
+          Y[0].Arr^[0] := 0;
+          pPointer(@Y[1].Arr^[0])^ := nil;
         end;
+
         ErrorEvent(IntToStr(numFound), msInfo, VisualObject);
       end;
 
@@ -4415,10 +4588,10 @@ begin
         else
         begin
           pPointer(@Y[0].Arr^[0])^ := nil;
-          pPointer(@Y[1].Arr^[0])^ := nil;
-          pPointer(@Y[2].Arr^[0])^ := nil;
           rd := -1;
           ld := -1;
+          Y[1].Arr^[0] := rd;
+          Y[2].Arr^[0] := ld;
         end;
         ErrorEvent(IntToStr(rd) + ' <> ' + IntToStr(ld), msInfo, VisualObject);
       end;
@@ -4480,6 +4653,8 @@ sim_cornerHarris := GetProcAddress(hDll, 'sim_cornerHarris');
 sim_dilate := GetProcAddress(hDll, 'sim_dilate');
 sim_erode := GetProcAddress(hDll, 'sim_erode');
 sim_roi := GetProcAddress(hDll, 'sim_roi');
+sim_flip := GetProcAddress(hDll, 'sim_flip');
+sim_rotate := GetProcAddress(hDll, 'sim_rotate');
 sim_split := GetProcAddress(hDll, 'sim_split');
 sim_inRange := GetProcAddress(hDll, 'sim_inRange');
 sim_merge := GetProcAddress(hDll, 'sim_merge');

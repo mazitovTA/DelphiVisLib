@@ -61,7 +61,7 @@ type
   //    в соответствии с этой таблицей создаются соответсвующие run-объекты   //
   //**************************************************************************//
 const
-  ClassTable:array[0..43] of TClassRecord =
+  ClassTable:array[0..45] of TClassRecord =
   (
     //Блоки для расчёта
     (Name:'TFRAMESOURCE';        RunClass:TFRAMESOURCE),
@@ -91,6 +91,8 @@ const
     (Name:'TDILATE';             RunClass:TDILATE),
     (Name:'TERODE';              RunClass:TERODE),
     (Name:'TROI';                RunClass:TROI),
+    (Name:'TFLIP';               RunClass:TFLIP),
+    (Name:'TROTATE';             RunClass:TROTATE),
     (Name:'TSPLIT';              RunClass:TSPLIT),
     (Name:'TINRANGE';            RunClass:TINRANGE),
     (Name:'TMERGE';              RunClass:TMERGE),
