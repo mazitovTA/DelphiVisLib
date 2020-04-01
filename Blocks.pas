@@ -4481,20 +4481,15 @@ begin
 
     f_GoodStep:
       begin
-
         templFrame := pPointer(@U[0].Arr^[0])^;
         templContour := pPointer(@U[1].Arr^[0])^;
         frame := pPointer(@U[2].Arr^[0])^;
         contours := pPointer(@U[3].Arr^[0])^;
-
         res := sim_findSign(templFrame, templContour, frame, contours,
           normalizedContourSizeX, normalizedContourSizeY, useHull, draw,
           minCorrelation, @numFound);
-
         if res = 0 then
         begin
-          //pPointer(@Y[0].Arr^[0])^ := frame;
-          //pPointer(@Y[1].Arr^[0])^ := templContour;
           Y[0].Arr^[0] := numFound;
           pPointer(@Y[1].Arr^[0])^ := frame;
         end
@@ -4503,8 +4498,7 @@ begin
           Y[0].Arr^[0] := 0;
           pPointer(@Y[1].Arr^[0])^ := nil;
         end;
-
-        ErrorEvent(IntToStr(numFound), msInfo, VisualObject);
+        //ErrorEvent(IntToStr(numFound), msInfo, VisualObject);
       end;
 
     f_Stop:
