@@ -4582,10 +4582,8 @@ begin
         else
         begin
           pPointer(@Y[0].Arr^[0])^ := nil;
-          rd := -1;
-          ld := -1;
-          Y[1].Arr^[0] := rd;
-          Y[2].Arr^[0] := ld;
+          Y[1].Arr^[0] := -1;
+          Y[2].Arr^[0] := -1;
         end;
         ErrorEvent(IntToStr(rd) + ' <> ' + IntToStr(ld), msInfo, VisualObject);
       end;
