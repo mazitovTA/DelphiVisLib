@@ -854,7 +854,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -934,7 +934,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1010,7 +1010,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1145,7 +1145,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1259,7 +1259,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1321,7 +1321,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1384,7 +1384,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1446,7 +1446,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1508,7 +1508,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1589,7 +1589,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1651,7 +1651,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1722,7 +1722,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1785,7 +1785,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1856,7 +1856,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -1926,7 +1926,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2013,7 +2013,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2101,7 +2101,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2180,7 +2180,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2258,7 +2258,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2351,7 +2351,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2453,7 +2453,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2549,7 +2549,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2636,7 +2636,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2714,7 +2714,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2792,7 +2792,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2885,7 +2885,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -2955,7 +2955,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -3025,7 +3025,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -3086,7 +3086,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -3169,7 +3169,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -3230,7 +3230,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -3334,7 +3334,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -3427,7 +3427,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -3513,7 +3513,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -3598,7 +3598,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -3678,7 +3678,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -3757,7 +3757,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -3828,7 +3828,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -4038,7 +4038,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -4140,7 +4140,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -4196,7 +4196,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -4289,7 +4289,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -4370,7 +4370,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -4461,7 +4461,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
@@ -4549,7 +4549,7 @@ begin
       end;
     i_GetInit:
       begin
-        result := 1;
+        result := 0;
       end;
   else
     result := inherited InfoFunc(Action, aParameter);
