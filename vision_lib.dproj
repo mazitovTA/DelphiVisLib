@@ -7,9 +7,9 @@
         <DCC_DependencyCheckOutputName>..\..\..\bin\vision_libb.dll</DCC_DependencyCheckOutputName>
         <ProjectVersion>18.2</ProjectVersion>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <AppType>Library</AppType>
-        <FrameworkType>None</FrameworkType>
+        <FrameworkType>VCL</FrameworkType>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
     </PropertyGroup>
@@ -70,7 +70,7 @@
         <DCC_MapFile>3</DCC_MapFile>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1049</VerInfo_Locale>
-        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Keys>CompanyName=3V Technologies inc.;FileDescription=Hydraulical systems modul;FileVersion=1.0.0.0;InternalName=MVTU;LegalCopyright=3V Technologies inc.;LegalTrademarks=SimInTech;OriginalFilename=;ProductName=SimInTech IDE;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <GenDll>true</GenDll>
     </PropertyGroup>
@@ -234,6 +234,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="..\..\..\bin\vision_lib.dll" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>vision_lib.dll</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\..\bin\vision_lib.dll" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>vision_lib.dll</RemoteName>
                         <Overwrite>true</Overwrite>

@@ -1,4 +1,4 @@
-﻿// ErrorEvent('1!!!', msError, VisualObject);
+﻿
 unit Blocks;
 
 interface
@@ -25,12 +25,8 @@ type
     COLOR_GRAY2RGB, // 8,
     COLOR_BGR2HSV, // 40,
     COLOR_RGB2HSV, // 41,
-    // COLOR_BGR2HLS, // 52,
-    // COLOR_RGB2HLS, // 53,
     COLOR_HSV2BGR, // 54,
     COLOR_HSV2RGB // 55
-    // COLOR_HLS2BGR, // 60,
-    // COLOR_HLS2RGB // 61,
     );
   TStructureElement = (MORPH_RECT, MORPH_CROSS, MORPH_ELLIPSE);
   TInterpolation = (INTER_NEAREST, INTER_LINEAR, INTER_CUBIC, INTER_AREA);
@@ -518,6 +514,7 @@ type
 
   TCalibrateCamera = class(TRunObject)
   public
+    calibrated: integer;
     image: Pointer;
     image_points: Pointer;
     object_points: Pointer;
@@ -536,6 +533,7 @@ type
 
   TLoadCalibrationParameters = class(TRunObject)
   public
+    dir : String;
     intrinsic: Pointer;
     distCoeffs: Pointer;
     fileName: String;
@@ -1028,8 +1026,6 @@ begin
       begin
         fileList := tStringList.Create;
         SearchInDir(sourceMask, sourcePath, True, fileList);
-        for tmp := 0 to fileList.Count - 1 do
-          ErrorEvent(fileList[tmp], msInfo, VisualObject);
         result := 0;
         counter := 0;
         res := 0;
@@ -1039,9 +1035,9 @@ begin
       begin
         if (counter < fileList.Count) and (fileList.Count > 0) then
         begin
+          ErrorEvent(fileList[counter], msInfo, VisualObject);
           res := openImage(@frame, fileList[counter], code);
           counter := counter + 1;
-          // ErrorEvent(IntToStr(counter), msError, VisualObject);
           if res = 0 then
           begin
             pPointer(@Y[0].Arr^[0])^ := frame;
@@ -1050,6 +1046,10 @@ begin
           begin
             pPointer(@Y[0].Arr^[0])^ := nil;
           end;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
         end;
       end;
 
@@ -1203,22 +1203,10 @@ begin
             res := sim_convertColor(src, @dst, 40);
           integer(COLOR_RGB2HSV):
             res := sim_convertColor(src, @dst, 41);
-          {
-            integer(COLOR_BGR2HLS):
-            res := sim_convertColor(src, @dst, 52);
-            integer(COLOR_RGB2HLS):
-            res := sim_convertColor(src, @dst, 53);
-          }
           integer(COLOR_HSV2BGR):
             res := sim_convertColor(src, @dst, 54);
           integer(COLOR_HSV2RGB):
             res := sim_convertColor(src, @dst, 55);
-          {
-            integer(COLOR_HLS2BGR):
-            res := sim_convertColor(src, @dst, 54);
-            integer(COLOR_HLS2RGB):
-            res := sim_convertColor(src, @dst, 55);
-          }
         End;
         if res = 0 then
         begin
@@ -3690,46 +3678,83 @@ var
   res: integer;
 begin
   result := 0;
+
   case Action of
 
     f_InitState:
       begin
         result := 0;
+        calibrated := 0;
       end;
 
     f_GoodStep:
       begin
-        image := pPointer(@U[0].Arr^[0])^;
-        // ErrorEvent(IntToStr(numCornersHor), msError, VisualObject);
-        // ErrorEvent(IntToStr(numCornersVer), msError, VisualObject);
-        res := sim_fidnCalibrationPoints(@image_points, @object_points, image,
-          @dstImage, numCornersHor, numCornersVer);
-        if res = 0 then
+        if pPointer(@U[0].Arr^[0])^ <> nil then
         begin
-          pPointer(@Y[0].Arr^[0])^ := dstImage;
+          ErrorEvent('++++++', msInfo, VisualObject);
+          image := pPointer(@U[0].Arr^[0])^;
+          res := sim_fidnCalibrationPoints(@image_points, @object_points, image,
+            @dstImage, numCornersHor, numCornersVer);
+          if res = 0 then
+          begin
+            pPointer(@Y[0].Arr^[0])^ := dstImage;
+          end
         end
         else
         begin
+          if calibrated = 0 then
+          begin
+            res := sim_calibrateCamera(image_points, object_points, image,
+            @intrinsic, @distCoeffs);
+            if res = 0 then
+            begin
+              calibrated := 1;
+              ErrorEvent('camera calibrated!!!', msInfo, VisualObject);
+              sim_saveCalibrationParameters(fileName, intrinsic, distCoeffs);
+              if res = 0 then
+                begin
+                  ErrorEvent('calibration data saved to file: ' + fileName, msInfo,
+                  VisualObject);
+                end;
+            end
+          else
+            begin
+              calibrated := -1;
+              ErrorEvent('Cant calibrate camera ', msInfo,
+                  VisualObject);
+            end;
+          end;
           pPointer(@Y[0].Arr^[0])^ := nil;
         end;
+
       end;
 
     f_Stop:
       begin
-        res := sim_calibrateCamera(image_points, object_points, image,
-          @intrinsic, @distCoeffs);
-        if res = 0 then
+
+        if calibrated = 0 then
         begin
-          ErrorEvent('camera calibrated!!!', msInfo, VisualObject);
-          sim_saveCalibrationParameters(fileName, intrinsic, distCoeffs);
+          res := sim_calibrateCamera(image_points, object_points, image,
+            @intrinsic, @distCoeffs);
           if res = 0 then
           begin
-            ErrorEvent('calibration data saved to file: ' + fileName, msInfo,
-              VisualObject);
+            ErrorEvent('camera calibrated!!!', msInfo, VisualObject);
+            sim_saveCalibrationParameters(fileName, intrinsic, distCoeffs);
+            if res = 0 then
+            begin
+              ErrorEvent('calibration data saved to file: ' + fileName, msInfo,
+                VisualObject);
+            end;
+          end
+          else
+          begin
+            ErrorEvent('Cant calibrate camera ', msInfo,
+                  VisualObject);
           end;
         end;
         releaseSimMat(@dstImage);
         result := 0;
+
       end;
 
   end
@@ -3844,10 +3869,26 @@ begin
 
     f_InitState:
       begin
-        res := sim_loadCalibrationParameters(fileName, @intrinsic, @distCoeffs);
+      if FileExists(fileName)
+        then
+        begin
+          dir := fileName;
+        end
+        else
+        begin
+          dir := GetCurrentDir + '\' + fileName;
+          if not FileExists(dir)
+          then
+          begin
+             ErrorEvent(dir + ' Файл не найден', msInfo, VisualObject);
+          end
+
+        end;
+
+        res := sim_loadCalibrationParameters(dir, @intrinsic, @distCoeffs);
         if res = 0 then
         begin
-          ErrorEvent('calibration data loaded from file: ' + fileName, msInfo,
+          ErrorEvent('calibration data loaded from file: ' + dir, msInfo,
             VisualObject);
           pPointer(@Y[0].Arr^[0])^ := intrinsic;
           pPointer(@Y[1].Arr^[0])^ := distCoeffs;
@@ -4498,7 +4539,6 @@ begin
           Y[0].Arr^[0] := 0;
           pPointer(@Y[1].Arr^[0])^ := nil;
         end;
-        //ErrorEvent(IntToStr(numFound), msInfo, VisualObject);
       end;
 
     f_Stop:
