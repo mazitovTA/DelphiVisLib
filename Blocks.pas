@@ -59,6 +59,22 @@ type
       var IsConst: boolean): NativeInt; override;
   end;
 
+  TUMIMPORT = class(TRunObject)
+  public
+    frame: Pointer;
+    server: Pointer;
+    client: Pointer;
+    chanells: NativeInt;
+    port: NativeInt;
+    state: NativeInt;
+    lastFrame: NativeInt;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
   TIMSEQREAD = class(TRunObject)
   public
     fileList: tStringList;
@@ -782,6 +798,11 @@ var
     roi_w: integer; wheel_h: integer; rd: Pointer; ld: Pointer;
     drawinput: Pointer): integer; cdecl;
 
+  um_init: function(server_socket: pPointer; client_socket: pPointer;
+    frame : pPointer; port : integer): integer; cdecl;
+  um_get_frame: function(socket: Pointer; frame: Pointer): integer; cdecl;
+  um_release_socket: function(socket: Pointer): Pointer; cdecl;
+
 implementation
 
 uses math, Masks;
@@ -896,6 +917,88 @@ begin
       begin
         releaseSimMat(@frame);
         releaseSourse(source);
+      end;
+  end
+end;
+
+
+/// /////////////////////////////////////////////////////////////////////////
+/// //                                   TUMIMPORT                  //////
+/// /////////////////////////////////////////////////////////////////////////
+function TUMIMPORT.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+    if StrEqu(ParamName, 'port') then
+    begin
+      result := NativeInt(@port);
+      DataType := dtInteger;
+    end
+  end
+end;
+
+function TUMIMPORT.InfoFunc(Action: integer; aParameter: NativeInt)
+  : NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 0;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TUMIMPORT.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+
+    f_InitState:
+      begin
+        lastFrame := 0;
+        state := um_init(@server, @client, @frame, port);
+        result := 0;
+      end;
+
+    f_GoodStep:
+      begin
+        if (state = 0) and (lastFrame = 0) then
+        begin
+          res := um_get_frame(client, frame);
+          if res = 0 then
+          begin
+            pPointer(@Y[0].Arr^[0])^ := frame;
+          end
+          else
+          begin
+            lastFrame := 1;
+            pPointer(@Y[0].Arr^[0])^ := nil;
+          end;
+        end
+        else
+        begin
+          pPointer(@Y[0].Arr^[0])^ := nil;
+        end;
+      end;
+
+    f_Stop:
+      begin
+        if state = 0 then
+        begin
+         um_release_socket(@server);
+         um_release_socket(@client);
+         releaseSimMat(@frame);
+        end;
       end;
   end
 end;
@@ -3691,7 +3794,6 @@ begin
       begin
         if pPointer(@U[0].Arr^[0])^ <> nil then
         begin
-          ErrorEvent('++++++', msInfo, VisualObject);
           image := pPointer(@U[0].Arr^[0])^;
           res := sim_fidnCalibrationPoints(@image_points, @object_points, image,
             @dstImage, numCornersHor, numCornersVer);
@@ -4709,6 +4811,11 @@ sim_loadCalibrationParameters := GetProcAddress(hDll,
   'sim_loadCalibrationParameters');
 sim_findSign := GetProcAddress(hDll, 'sim_findSign');
 sim_detectLanes := GetProcAddress(hDll, 'sim_detectLanes');
+
+um_init := GetProcAddress(hDll, 'um_init');
+um_get_frame := GetProcAddress(hDll, 'um_get_frame');
+um_release_socket := GetProcAddress(hDll, 'um_release_socket');
+
 
 finalization
 

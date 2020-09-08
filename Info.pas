@@ -61,7 +61,7 @@ type
   //    в соответствии с этой таблицей создаются соответсвующие run-объекты   //
   //**************************************************************************//
 const
-  ClassTable:array[0..45] of TClassRecord =
+  ClassTable:array[0..46] of TClassRecord =
   (
     //Блоки для расчёта
     (Name:'TFRAMESOURCE';        RunClass:TFRAMESOURCE),
@@ -109,7 +109,8 @@ const
     (Name:'TSelectContour';      RunClass:TSelectContour),
     (Name:'TSelectContourArea';  RunClass:TSelectContourArea),
     (Name:'TFindSign';           RunClass:TFindSign),
-    (Name:'TDetectLanes';        RunClass:TDetectLanes)
+    (Name:'TDetectLanes';        RunClass:TDetectLanes),
+    (Name:'TUMIMPORT';           RunClass:TUMIMPORT)
   );
 
   //Это процедура создания объектов
