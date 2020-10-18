@@ -679,6 +679,17 @@ type
       var IsConst: boolean): NativeInt; override;
   end;
 
+  TCountContours = class(TRunObject)
+  public
+    inputContours: Pointer;
+    count: NativeInt;
+    function InfoFunc(Action: integer; aParameter: NativeInt)
+      : NativeInt; override;
+    function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
+    function GetParamID(const ParamName: string; var DataType: TDataType;
+      var IsConst: boolean): NativeInt; override;
+  end;
+
   // **************************************************************************//
   // Определяем ссылки для каждой функции библиотеки          //
   // **************************************************************************//
@@ -776,6 +787,7 @@ var
     dstItmage: pPointer; result: pPointer): integer; cdecl;
   sim_minMaxAreaContoursFilter: function(src: Pointer; dst: pPointer;
     min: Pointer; max: Pointer): integer; cdecl;
+  sim_countContours: function(src: Pointer; count: Pointer): integer; cdecl;
   sim_fidnCalibrationPoints: function(image_points: pPointer;
     object_points: pPointer; image: Pointer; dst: pPointer;
     numCornersHor: integer; numCornersVer: integer): integer; cdecl;
@@ -4738,6 +4750,64 @@ begin
   end
 end;
 
+
+/// /////////////////////////////////////////////////////////////////////////
+/// //                         TDetectLanes                      //////
+/// /////////////////////////////////////////////////////////////////////////
+function TCountContours.GetParamID;
+begin
+  result := inherited GetParamID(ParamName, DataType, IsConst);
+  if result = -1 then
+  begin
+
+  end
+end;
+
+function TCountContours.InfoFunc(Action: integer; aParameter: NativeInt)
+  : NativeInt;
+begin
+  result := 0;
+  case Action of
+    i_GetCount:
+      begin
+        cY[0] := 1;
+      end;
+    i_GetInit:
+      begin
+        result := 0;
+      end;
+  else
+    result := inherited InfoFunc(Action, aParameter);
+  end
+end;
+
+function TCountContours.RunFunc;
+var
+  res: integer;
+begin
+  result := 0;
+  case Action of
+    f_InitState:
+      begin
+        result := 0;
+      end;
+
+    f_GoodStep:
+      begin
+        count := 0;
+        inputContours := pPointer(@U[0].Arr^[0])^;
+        res := sim_countContours(inputContours, @count);
+        Y[0].Arr^[0] := count;
+      end;
+
+    f_Stop:
+      begin
+        result := 0;
+      end;
+
+  end
+end;
+
 // ***********************************************************************//
 // Раздел инициализации                               //
 // ***********************************************************************//
@@ -4811,6 +4881,7 @@ sim_loadCalibrationParameters := GetProcAddress(hDll,
   'sim_loadCalibrationParameters');
 sim_findSign := GetProcAddress(hDll, 'sim_findSign');
 sim_detectLanes := GetProcAddress(hDll, 'sim_detectLanes');
+sim_countContours := GetProcAddress(hDll, 'sim_countContours');
 
 um_init := GetProcAddress(hDll, 'um_init');
 um_get_frame := GetProcAddress(hDll, 'um_get_frame');
