@@ -672,6 +672,8 @@ type
     numHorHist: NativeInt;
     wheel: NativeInt;
     roi: NativeInt;
+    leftPointCount: NativeInt;
+    rightPointCount: NativeInt;
     function InfoFunc(Action: integer; aParameter: NativeInt)
       : NativeInt; override;
     function RunFunc(var at, h: RealType; Action: integer): NativeInt; override;
@@ -808,7 +810,8 @@ var
 
   sim_detectLanes: function(binaryinput: Pointer; numHorHist: integer;
     roi_w: integer; wheel_h: integer; rd: Pointer; ld: Pointer;
-    drawinput: Pointer): integer; cdecl;
+    drawinput: Pointer; leftPointCount: Pointer; rightPointCount: Pointer):
+    integer; cdecl;
 
   um_init: function(server_socket: pPointer; client_socket: pPointer;
     frame : pPointer; port : integer): integer; cdecl;
@@ -4726,18 +4729,22 @@ begin
         binaryinput := pPointer(@U[0].Arr^[0])^;
         drawinput := pPointer(@U[1].Arr^[0])^;
         res := sim_detectLanes(binaryinput, numHorHist, roi, wheel, @rd, @ld,
-          drawinput);
+          drawinput, @leftPointCount, @rightPointCount);
         if res = 0 then
         begin
           pPointer(@Y[0].Arr^[0])^ := drawinput;
           Y[1].Arr^[0] := rd;
-          Y[2].Arr^[0] := ld;
+          Y[1].Arr^[1] := ld;
+          Y[2].Arr^[0] := rightPointCount;
+          Y[2].Arr^[1] := leftPointCount;
         end
         else
         begin
           pPointer(@Y[0].Arr^[0])^ := nil;
           Y[1].Arr^[0] := -1;
+          Y[1].Arr^[1] := -1;
           Y[2].Arr^[0] := -1;
+          Y[2].Arr^[1] := -1;
         end;
         ErrorEvent(IntToStr(rd) + ' <> ' + IntToStr(ld), msInfo, VisualObject);
       end;
