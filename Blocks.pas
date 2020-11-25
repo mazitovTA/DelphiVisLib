@@ -4703,6 +4703,8 @@ begin
     i_GetCount:
       begin
         cY[0] := 1;
+        cY[1] := 2;
+        cY[2] := 2;
       end;
     i_GetInit:
       begin
